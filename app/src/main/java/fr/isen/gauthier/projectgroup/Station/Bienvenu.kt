@@ -63,7 +63,7 @@ class Bienvenu : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = " Bienvenu ",
+                text = " Bienvenue ",
                 fontFamily = FontFamily.Default,
                 fontSize = 44.sp,
                 modifier = Modifier.padding(bottom = 16.dp)
