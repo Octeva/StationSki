@@ -25,7 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import fr.isen.gauthier.projectgroup.R
 
 
-class HomeActivity : ComponentActivity() {
+class Bienvenu : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -54,20 +54,8 @@ class HomeActivity : ComponentActivity() {
                 }
             }
         }
-
-        Log.d("lifeCycle", "Home Activity - OnCreate")
     }
-
-    override fun onPause(){
-        Log.d("lifeCycle", "Home Activity - OnPause")
-        super.onPause()
-    }
-    override fun onResume(){
-        super.onResume()
-        Log.d("lifeCycle", "Home Activity - OnResume")
-    }
-    override fun onDestroy(){
-        Log.d("lifeCycle", "Home Activity - OnDestroy")
-        super.onDestroy()
+    companion object {
+        val HOME_EXTRA_KEY = "HOME_EXTRA_KEY"
     }
 }
