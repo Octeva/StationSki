@@ -13,18 +13,21 @@
         android:theme="@style/Theme.ProjectGroup"
         tools:targetApi="31">
         <activity
+            android:name=".Station.PisteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_piste"
+            android:theme="@style/Theme.ProjectGroup" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ProjectGroup"/>
-
+            android:theme="@style/Theme.ProjectGroup" />
         <activity
             android:name=".Station.Bienvenu"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ProjectGroup">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />

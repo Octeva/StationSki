@@ -129,7 +129,6 @@ class Bienvenu : ComponentActivity() {
                     contentDescription = null
                 )
             }
-            Spacer(Modifier.weight(1f))
 
         }
     }
