@@ -45,9 +45,6 @@ class Bienvenu : ComponentActivity() {
             BasketView()
         }
     }
-    companion object {
-        val HOME_EXTRA_KEY = "HOME_EXTRA_KEY"
-    }
 }
 
 @Composable fun BasketView() {
@@ -90,7 +87,8 @@ class Bienvenu : ComponentActivity() {
                 .background(color = colorResource(id = R.color.purple_500))
         ) {
             OutlinedButton(onClick = {
-                Toast.makeText(context, "on dessand", Toast.LENGTH_LONG).show()
+                val intent = Intent(context,PisteActivity::class.java)
+                context.startActivity(intent)
             }){
                 Image(
                     painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
@@ -98,7 +96,8 @@ class Bienvenu : ComponentActivity() {
                 )
             }
             OutlinedButton(onClick = {
-                Toast.makeText(context, "on monte", Toast.LENGTH_LONG).show()
+                val intent = Intent(context,RemonteActivity::class.java)
+                context.startActivity(intent)
             }){
                 Image(
                     painterResource(R.drawable._205016),

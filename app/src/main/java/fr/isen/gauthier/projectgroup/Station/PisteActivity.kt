@@ -1,5 +1,6 @@
 package fr.isen.gauthier.projectgroup.Station
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,15 +19,13 @@ class PisteActivity : ComponentActivity() {
         setContent {
             ProjectGroupTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Greeting2("Android")
                 }
             }
         }
     }
+
 }
 
 @Composable
