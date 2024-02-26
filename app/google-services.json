@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:765027624751:android:cf424ce85902d3e77c23da",
+        "mobilesdk_app_id": "1:765027624751:android:6f630c49b03ad08d7c23da",
         "android_client_info": {
-          "package_name": "com.android.application"
+          "package_name": "fr.isen.gauthier.projectgroup"
         }
       },
       "oauth_client": [],
