@@ -45,9 +45,6 @@ class Bienvenu : ComponentActivity() {
             BasketView()
         }
     }
-    companion object {
-        val HOME_EXTRA_KEY = "HOME_EXTRA_KEY"
-    }
 }
 
 @Composable fun BasketView() {
@@ -63,7 +60,7 @@ class Bienvenu : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = " Bienvenu ",
+                text = " Bienvenue ",
                 fontFamily = FontFamily.Default,
                 fontSize = 44.sp,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -90,41 +87,47 @@ class Bienvenu : ComponentActivity() {
                 .background(color = colorResource(id = R.color.purple_500))
         ) {
             OutlinedButton(onClick = {
-                Toast.makeText(context, "on dessand", Toast.LENGTH_LONG).show()
+                val intent = Intent(context,PisteActivity::class.java)
+                context.startActivity(intent)
             }){
-                Text(
-                    text = "Piste"
+                Image(
+                    painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                    contentDescription = null
                 )
             }
             OutlinedButton(onClick = {
-                Toast.makeText(context, "on monte", Toast.LENGTH_LONG).show()
+                val intent = Intent(context,RemonteActivity::class.java)
+                context.startActivity(intent)
             }){
-                Text(
-                    text = "Remonter"
+                Image(
+                    painterResource(R.drawable._205016),
+                    contentDescription = null
                 )
             }
             OutlinedButton(onClick = {
                 Toast.makeText(context, "ici", Toast.LENGTH_LONG).show()
             }){
-                Text(
-                    text = "Menu"
+                Image(
+                    painterResource(R.drawable.picto_maison_png),
+                    contentDescription = null
                 )
             }
             OutlinedButton(onClick = {
                 Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
             }){
-                Text(
-                    text = "chat"
+                Image(
+                    painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                    contentDescription = null
                 )
             }
             OutlinedButton(onClick = {
-                Toast.makeText(context, "refraiche", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
             }){
-                Text(
-                    text = "Refraiche"
+                Image(
+                    painterResource(R.drawable.refresh_icon),
+                    contentDescription = null
                 )
             }
-            Spacer(Modifier.weight(1f))
 
         }
     }

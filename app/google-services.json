@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "765027624751",
+    "firebase_url": "https://projectgroup-4baa2-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "projectgroup-4baa2",
+    "storage_bucket": "projectgroup-4baa2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765027624751:android:6f630c49b03ad08d7c23da",
+        "android_client_info": {
+          "package_name": "fr.isen.gauthier.projectgroup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATxrqw3btIdv6PUXhpmrhamCAaYjR_CKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
