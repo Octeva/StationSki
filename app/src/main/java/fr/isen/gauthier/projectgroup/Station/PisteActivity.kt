@@ -2,6 +2,7 @@ package fr.isen.gauthier.projectgroup.Station
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -76,6 +77,7 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
 fun test() {
     val expandedCategoryIndex = remember { mutableStateOf<Int?>(null) }
     val categories = remember { mutableStateListOf<PisteCategory>() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         val newData = getDataFromDatabase()
@@ -112,13 +114,21 @@ fun test() {
                     )
                     // Si l'index de la catégorie est le même que l'index de la catégorie actuellement étendue
                     if (expandedCategoryIndex.value == index) {
-                        // Afficher les pistes de la catégorie
+                        // Afficher les boutons pour chaque piste de la catégorie
                         category.pistes.forEach { piste ->
-                            Text(
-                                text = piste.name, // Suppose que Piste a une propriété 'name'
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal
-                            )
+                            Button(
+                                onClick = {
+                                    // Afficher le Toast lorsque le bouton est cliqué
+                                    Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
+                                },
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = piste.name,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
                         }
                     }
                 }
@@ -126,6 +136,7 @@ fun test() {
         }
     }
 }
+
 
 suspend fun getDataFromDatabase(): List<PisteCategory> {
     return suspendCoroutine { continuation ->
@@ -150,8 +161,3 @@ suspend fun getDataFromDatabase(): List<PisteCategory> {
             })
     }
 }
-
-
-
-
-//Modifier.clickable {  },
