@@ -1,24 +1,20 @@
 package fr.isen.gauthier.projectgroup.Station
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -28,12 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,29 +40,34 @@ import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
-import fr.isen.gauthier.projectgroup.Station.DetailActivity
+import fr.isen.gauthier.projectgroup.Network.RemonteCategory
+import fr.isen.gauthier.projectgroup.Network.Remontee
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
+import java.util.concurrent.Flow
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class PisteActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
 
+class RemonteActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            test(PisteCategory())
+            teste()
         }
     }
 }
 
+
 @Composable
-fun GetData(categories: SnapshotStateList<PisteCategory>) {
-    CallDataBase.database.getReference("pistes")
+fun GetDataX(categories: SnapshotStateList<RemonteCategory>) {
+    CallDataBase.database.getReference("remontee")
         .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                //val categories: MutableList<PisteCategory> = mutableListOf()
-                snapshot.children.forEach {
-                    val pistes = it.children.mapNotNull { it.getValue(Piste::class.java) }
-                    categories.add(PisteCategory(it.key ?: "", pistes))
+                snapshot.children.forEach{
+                    val remontee = it.children.mapNotNull { it.getValue(Remontee::class.java) }
+                    categories.add(RemonteCategory(it.key?:"",remontee))
                 }
                 Log.d("database", snapshot.toString())
             }
@@ -76,18 +77,19 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
         })
 }
 
+
 @Composable
-fun test(category: PisteCategory) {
-    val expandedCategoryIndex = remember { mutableStateOf<Int?>(null) }
-    val categories = remember { mutableStateListOf<PisteCategory>() }
+fun teste() {
     val context = LocalContext.current
+    var expandedCategoryIndex = remember { mutableStateOf<Int?>(null) }
+    val categories = remember { mutableStateListOf<RemonteCategory>() }
+
 
     LaunchedEffect(Unit) {
-        val newData = getDataFromDatabase()
-        categories.addAll(newData)
+        val newDatas = getDataDatabase()
+        categories.addAll(newDatas)
     }
-
-    val colors = listOf(Color.Cyan, Color.Gray, Color.Red, Color.Green)
+    val colors = listOf(Color.Cyan, Color.Red)
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -118,17 +120,12 @@ fun test(category: PisteCategory) {
                     // Si l'index de la catégorie est le même que l'index de la catégorie actuellement étendue
                     if (expandedCategoryIndex.value == index) {
                         // Afficher les boutons pour chaque piste de la catégorie
-                        category.pistes.forEach { piste ->
+                        category.remontee.forEach { piste ->
                             Button(
                                 onClick = {
                                     // Afficher le Toast lorsque le bouton est cliqué
-                                    //Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(context, DetailActivity::class.java)
-
-                                    //intent.putExtra(DetailActivity., pistes)
-                                    intent.putExtra(DetailActivity.DETAIL_EXTRA_KEY, piste)
-                                    context.startActivity(intent)
-                                          },
+                                    Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
+                                },
                                 modifier = Modifier.padding(vertical = 4.dp)
                             ) {
                                 Text(
@@ -143,27 +140,26 @@ fun test(category: PisteCategory) {
             }
         }
     }
+
 }
 
-
-suspend fun getDataFromDatabase(): List<PisteCategory> {
+suspend fun getDataDatabase(): List<RemonteCategory> {
     return suspendCoroutine { continuation ->
-        CallDataBase.database.getReference("pistes")
+        CallDataBase.database.getReference("remontee")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val newData = mutableListOf<PisteCategory>()
-                    snapshot.children.forEach { categorySnapshot ->
+                    val newDatas = mutableListOf<RemonteCategory>()
+                    snapshot.children.forEach {categorySnapshot ->
                         val categoryName = categorySnapshot.key ?: ""
-                        val pistes = categorySnapshot.children.mapNotNull { pisteSnapshot ->
-                            pisteSnapshot.getValue(Piste::class.java)
+                        val remontee = categorySnapshot.children.mapNotNull { remonteeSnapshot ->
+                            remonteeSnapshot.getValue(Remontee::class.java)
                         }
-                        newData.add(PisteCategory(categoryName, pistes))
+                        newDatas.add(RemonteCategory(categoryName, remontee))
                     }
-                    continuation.resume(newData)
+                    continuation.resume(newDatas)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error
                     continuation.resume(emptyList())
                 }
             })

@@ -96,9 +96,8 @@ class Bienvenu : ComponentActivity() {
                 )
             }
             OutlinedButton(onClick = {
-                /*val intent = Intent(context,RemonteActivity::class.java)
-                context.startActivity(intent)*/
-                Toast.makeText(context, "on monte", Toast.LENGTH_LONG).show()
+                val intent = Intent(context,RemonteActivity::class.java)
+                context.startActivity(intent)
             }){
                 Image(
                     painterResource(R.drawable._205016),

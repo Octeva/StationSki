@@ -23,24 +23,21 @@
             android:theme="@style/Theme.ProjectGroup" />
         <activity
             android:name=".SignInActivity"
-            android:exported="false"
-            android:theme="@style/Theme.ProjectGroup"/>
+            android:exported="false" />
 
         <activity
             android:name=".LogInActivity"
-            android:exported="false"
-            android:theme="@style/Theme.ProjectGroup"/>
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="MainActivity"
-            android:theme="@style/Theme.ProjectGroup">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        </activity>
+            android:theme="@style/Theme.ProjectGroup"/>
+        <activity
+            android:name=".Station.RemonteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_remonte"
+            android:theme="@style/Theme.ProjectGroup" />
 
         <activity
             android:name=".Station.Bienvenu"
@@ -48,8 +45,9 @@
             android:label="Bienvenu"
             android:theme="@style/Theme.ProjectGroup" />
 
-
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
