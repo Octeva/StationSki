@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ProjectGroup</string>
+    <string name="title_activity_remonte">RemonteActivity</string>
     <string name="title_activity_piste">PisteActivity</string>
 </resources>

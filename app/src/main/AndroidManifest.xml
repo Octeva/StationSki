@@ -32,6 +32,11 @@
             android:exported="true"
             android:label="MainActivity"
             android:theme="@style/Theme.ProjectGroup"/>
+        <activity
+            android:name=".Station.RemonteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_remonte"
+            android:theme="@style/Theme.ProjectGroup" />
 
         <activity
             android:name=".Station.Bienvenu"
