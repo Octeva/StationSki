@@ -23,66 +23,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-class LogInActivity : ComponentActivity() {
+class LogInActivity : EmailPasswordActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LogInScreen()
-
+            ConnexionScreen(AuthenticationType.LOGIN, auth)
         }
     }
 }
 
 
-@Composable
-fun LogInScreen() {
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = "Log In",
-            //style = MaterialTheme.typography.h5
-            style = TextStyle(
-                fontFamily = FontFamily.Serif, // Changer la famille de police
-                fontSize = 40.sp, // Changer la taille de la police en sp (scaled pixels)
-                // Vous pouvez également spécifier d'autres propriétés de style comme fontWeight, fontStyle, etc. si nécessaire
-                color = Color.White
-
-            )
-        )
-        Button(
-            onClick = { /* TODO: Action when Login button is clicked */ },
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Identifiant"
-            )
-        }
-        Button(
-            onClick = { /* TODO: Action when Sign in button is clicked */ },
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(text = "Mot de passe")
-        }
-
-        Spacer(modifier = Modifier.height(90.dp))
-
-
-        Button(
-            onClick = {
-                Toast.makeText(context, "Retour à l'accueil", Toast.LENGTH_SHORT).show()
-                (context as? ComponentActivity)?.finish() // Terminer l'activité actuelle pour revenir à l'écran précédent (HomeActivity) }, // Finish the activity when the button is clicked
-            },
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(text = "Retour")
-        }
-
-    }
-
-
-}

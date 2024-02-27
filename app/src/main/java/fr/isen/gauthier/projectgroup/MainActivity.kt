@@ -84,7 +84,7 @@ fun AuthentificationScreen() {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Connexion",
+            text = "Authentification",
             //style = MaterialTheme.typography.h5
             style = TextStyle(
                 fontFamily = FontFamily.Serif, // Changer la famille de police
@@ -110,7 +110,7 @@ fun AuthentificationScreen() {
                 context.startActivity(intent) },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = "Sign in")
+            Text(text = "Sign up")
         }
     }
 
@@ -127,11 +127,11 @@ fun AuthentificationScreenPreview() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+//@Composable
+//fun Greeting(name: String, modifier: Modifier = Modifier) {
+  //  Text(
+      //  text = "Hello $name!",
+    //    modifier = modifier
+    //)
+//}
 
