@@ -1,9 +1,9 @@
 package fr.isen.gauthier.projectgroup.Network
 
 data class Pistes (
-    val affluence : Int,
-    val cross: List<Cross>,
-    val etat : Boolean,
-    val name: String,
-    val visibility : Int
+    var affluence : Int,
+    var cross: List<Cross>,
+    var etat : Boolean,
+    var name: String,
+    var visibility : Int
 )

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ProjectGroup</string>
     <string name="title_activity_piste">PisteActivity</string>
+    <string name="piste_verte">Vertes</string>
+    <string name="piste_bleue">Bleues</string>
+    <string name="piste_rouge">Rouges</string>
+    <string name="piste_noire">Noires</string>
 </resources>
