@@ -1,6 +1,6 @@
 package fr.isen.gauthier.projectgroup
 
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity

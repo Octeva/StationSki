@@ -20,9 +20,7 @@
         <activity
             android:name=".SignInActivity"
             android:exported="false" />
-        <activity
-            android:name=".SignInActivity2"
-            android:exported="false" />
+
         <activity
             android:name=".LogInActivity"
             android:exported="false" />
@@ -30,18 +28,19 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="MainActivity"
-            android:theme="@style/Theme.ProjectGroup">
+            android:theme="@style/Theme.ProjectGroup"/>
+
+        <activity
+            android:name=".Station.Bienvenu"
+            android:exported="true"
+            android:label="Bienvenu"
+            android:theme="@style/Theme.ProjectGroup" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Station.Bienvenu"
-            android:exported="true"
-            android:label="Bienvenu"
-            android:theme="@style/Theme.ProjectGroup" />
     </application>
 
 </manifest>
