@@ -43,8 +43,8 @@
             android:name=".Station.Bienvenu"
             android:exported="true"
             android:label="Bienvenu"
-            android:theme="@style/Theme.ProjectGroup" />
-
+            android:theme="@style/Theme.ProjectGroup">
+            <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
