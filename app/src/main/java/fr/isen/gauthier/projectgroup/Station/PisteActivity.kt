@@ -2,11 +2,14 @@ package fr.isen.gauthier.projectgroup.Station
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -70,48 +75,67 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
 
 @Composable
 fun test() {
+    val expandedCategoryIndex = remember { mutableStateOf<Int?>(null) }
+    val categories = remember { mutableStateListOf<PisteCategory>() }
     val context = LocalContext.current
-    var expandedCategoryIndex by remember { mutableStateOf<Int?>(null) }
-    var categories by remember { mutableStateOf<List<PisteCategory>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         val newData = getDataFromDatabase()
-        categories = newData
+        categories.addAll(newData)
     }
 
     val colors = listOf(Color.Cyan, Color.Gray, Color.Red, Color.Green)
 
     LazyColumn(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
         itemsIndexed(categories) { index, category ->
             val categoryColor = colors.getOrNull(index % colors.size) ?: Color.Transparent
-            val backgroundColor = if (index == expandedCategoryIndex) categoryColor.copy(alpha = 0.5f) else categoryColor
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Box(
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(color = categoryColor)
+                    .padding(16.dp)
                     .clickable {
-                        expandedCategoryIndex = index
-                    }
-                    .background(color = backgroundColor)
+                        expandedCategoryIndex.value = index
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                Text(category.code)
-                if (expandedCategoryIndex == index) {
-                    category.pistes.forEach { piste ->
-                        Text(piste.name)
+                Column {
+                    // Affiche le nom de la catégorie
+                    Text(
+                        text = category.code,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    // Si l'index de la catégorie est le même que l'index de la catégorie actuellement étendue
+                    if (expandedCategoryIndex.value == index) {
+                        // Afficher les boutons pour chaque piste de la catégorie
+                        category.pistes.forEach { piste ->
+                            Button(
+                                onClick = {
+                                    // Afficher le Toast lorsque le bouton est cliqué
+                                    Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
+                                },
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = piste.name,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+                        }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
-
 
 
 suspend fun getDataFromDatabase(): List<PisteCategory> {
@@ -120,9 +144,12 @@ suspend fun getDataFromDatabase(): List<PisteCategory> {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val newData = mutableListOf<PisteCategory>()
-                    snapshot.children.forEach {
-                        val pistes = it.children.mapNotNull { it.getValue(Piste::class.java) }
-                        newData.add(PisteCategory(it.key ?: "", pistes))
+                    snapshot.children.forEach { categorySnapshot ->
+                        val categoryName = categorySnapshot.key ?: ""
+                        val pistes = categorySnapshot.children.mapNotNull { pisteSnapshot ->
+                            pisteSnapshot.getValue(Piste::class.java)
+                        }
+                        newData.add(PisteCategory(categoryName, pistes))
                     }
                     continuation.resume(newData)
                 }
@@ -134,6 +161,3 @@ suspend fun getDataFromDatabase(): List<PisteCategory> {
             })
     }
 }
-
-
-//Modifier.clickable {  },
