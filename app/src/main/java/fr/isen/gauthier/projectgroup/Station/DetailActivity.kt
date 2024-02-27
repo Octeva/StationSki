@@ -27,49 +27,67 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.gauthier.projectgroup.Network.Piste
+import fr.isen.gauthier.projectgroup.Station.PisteActivity
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
 import fr.isen.gauthier.projectgroup.R
 import fr.isen.gauthier.projectgroup.ui.theme.ProjectGroupTheme
+import java.io.Serializable
 import kotlin.math.max
 import fr.isen.gauthier.projectgroup.Network.Piste as Piste1
 
 
 class DetailActivity : ComponentActivity() {
+    companion object {
+        val DETAIL_EXTRA_KEY = "DETAIL_EXTRA_KEY"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
+        val piste = intent.getSerializableExtra(DETAIL_EXTRA_KEY) as? Piste
+
         super.onCreate(savedInstanceState)
 
         setContent {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                piste?. let {
+                    Text(
+                        text = it.name,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(start = 15.dp)
+                    )
+                }
+
+                Text(
+                    text = "Renseignement sur la piste"
+                )
+
+                //Couleur de la piste
+                //Etat de la piste en fonction du dernier utilisateur qui a renseigné
+                //Affluence sur la piste en fonction du dernier utilisateur qui a renseigné
+                // Meteo sur la piste en fonction du dernier utilisateur qui a renseigné
+
 
 
             StatePiste(Piste())
-            Affluence(Piste())
+
             }
         }
     }
-
-    override fun onPause(){
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 }
+
 
 
 @Composable
 fun StatePiste(piste: Piste) {
-    val etatText = remember { mutableStateOf(if (piste.etat) "Ouvert" else "Fermé") }
+    val etatText = remember { mutableStateOf("") }
+    val affluenceText = remember { mutableStateOf("") }
+    val weatherText = remember { mutableStateOf("") }
+    var context = LocalContext.current
 
     Row(modifier = Modifier.padding(top = 30.dp)) {
         Text(text = "Piste ${piste.name} ${etatText.value}",
@@ -90,41 +108,87 @@ fun StatePiste(piste: Piste) {
             Text(text = "Fermé")
         }
     }
-}
+        Column(modifier = Modifier.padding(top = 30.dp)) {
+            Text(text = "Quel est l'affluence sur cette piste ? ${affluenceText.value}",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+            Row {
 
-//Text(text = "Quel est l'affluence sur ${piste.name} : ${affluenceText.value}",
-@Composable
-fun Affluence(piste: Piste) {
-    val affluenceText = remember { mutableStateOf("Peu") }
 
-   Column(modifier = Modifier.padding(top = 30.dp)) {
-        Text(text = "Quel est l'affluence sur cette piste ? ${affluenceText.value}",
+                Button(onClick = {
+                    piste.affluence = 0
+                    affluenceText.value = "Peu"
+                }) {
+                    Text(text = "Peu")
+                }
+
+                Button(onClick = {
+                    piste.affluence = 1
+                    affluenceText.value = "Moyen"
+                }) {
+                    Text(text = "Moyen")
+                }
+
+                Button(onClick = {
+                    piste.affluence = 2
+                    affluenceText.value = "Beaucoup"
+                }) {
+                    Text(text = "Beaucoup")
+                }
+            }
+        }
+
+    Column(modifier = Modifier.padding(top = 30.dp)) {
+        Text(text = "Quel est la meteo sur cette piste ? ${weatherText.value}",
             fontSize = 20.sp,
             fontFamily = FontFamily.Serif,
             modifier = Modifier.padding(10.dp))
-       Row {
 
+        Row {
+            Button(onClick = {
+                piste.visibility = 0
+                weatherText.value = "Soleil"
+            }) {
+                Text(text = "Soleil")
+            }
 
-        Button(onClick = {
-            piste.affluence = 0
-            affluenceText.value = "Peu"
-        }) {
-            Text(text = "Peu")
+            Button(onClick = {
+                piste.visibility = 1
+                weatherText.value = "Nuageux"
+            }) {
+                Text(text = "Nuage")
+            }
+
+            Button(onClick = {
+                piste.visibility = 2
+                weatherText.value = "Brouillard"
+            }) {
+                Text(text = "Brouillard")
+            }
+        }
+        Row {
+            Button(onClick = {
+                piste.visibility = 3
+                weatherText.value = "Venteux"
+            }) {
+                Text(text = "Vent")
+            }
+            Button(onClick = {
+                piste.visibility = 4
+                weatherText.value = "Neige"
+            }) {
+                Text(text = "Neige")
+            }
         }
 
-        Button(onClick = {
-            piste.affluence = 1
-            affluenceText.value = "Moyen"
-        }) {
-            Text(text = "Moyen")
-        }
-
-        Button(onClick = {
-            piste.affluence = 2
-            affluenceText.value = "Beaucoup"
-        }) {
-            Text(text = "Beaucoup")
-        }
     }
-   }
+
+    Button(onClick = {
+        Toast.makeText(context, "Piste ${piste.name} enregistrée", Toast.LENGTH_LONG).show()
+    }) {
+        Text(text = "Enregistrer")
+    }
 }
+
+//Text(text = "Quel est l'affluence sur ${piste.name} : ${affluenceText.value}",

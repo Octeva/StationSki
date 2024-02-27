@@ -1,5 +1,6 @@
 package fr.isen.gauthier.projectgroup.Station
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -43,14 +44,16 @@ import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
+import fr.isen.gauthier.projectgroup.Station.DetailActivity
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class PisteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
-            test()
+            test(PisteCategory())
         }
     }
 }
@@ -74,7 +77,7 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
 }
 
 @Composable
-fun test() {
+fun test(category: PisteCategory) {
     val expandedCategoryIndex = remember { mutableStateOf<Int?>(null) }
     val categories = remember { mutableStateListOf<PisteCategory>() }
     val context = LocalContext.current
@@ -119,8 +122,13 @@ fun test() {
                             Button(
                                 onClick = {
                                     // Afficher le Toast lorsque le bouton est cliqué
-                                    Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
-                                },
+                                    //Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(context, DetailActivity::class.java)
+
+                                    //intent.putExtra(DetailActivity., pistes)
+                                    intent.putExtra(DetailActivity.DETAIL_EXTRA_KEY, piste)
+                                    context.startActivity(intent)
+                                          },
                                 modifier = Modifier.padding(vertical = 4.dp)
                             ) {
                                 Text(
