@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,8 @@ import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class PisteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,25 +60,54 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
         })
 }
 
-@Composable fun test() {
+@Composable
+fun test() {
     val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
-    var categories = remember {
-        mutableStateListOf<PisteCategory>()
+    var expandedCategoryIndex by remember { mutableStateOf<Int?>(null) }
+    var categories by remember { mutableStateOf<List<PisteCategory>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        val newData = getDataFromDatabase()
+        categories = newData
     }
 
     LazyColumn {
-        items(categories) {
-            Text(it.code)
-            if(true) {
-                it.pistes.forEach {
-                    Text(it.name)
+        items(categories.size) { index ->
+            val category = categories[index]
+            Column(modifier = Modifier.clickable {
+                expandedCategoryIndex = index
+            }) {
+                Text(category.code)
+                if (expandedCategoryIndex == index) {
+                    category.pistes.forEach { piste ->
+                        Text(piste.name)
+                    }
                 }
             }
         }
     }
-
-    GetData(categories)
 }
+
+suspend fun getDataFromDatabase(): List<PisteCategory> {
+    return suspendCoroutine { continuation ->
+        CallDataBase.database.getReference("pistes")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val newData = mutableListOf<PisteCategory>()
+                    snapshot.children.forEach {
+                        val pistes = it.children.mapNotNull { it.getValue(Piste::class.java) }
+                        newData.add(PisteCategory(it.key ?: "", pistes))
+                    }
+                    continuation.resume(newData)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error
+                    continuation.resume(emptyList())
+                }
+            })
+    }
+}
+
 
 //Modifier.clickable {  },
