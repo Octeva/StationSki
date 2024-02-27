@@ -1,4 +1,6 @@
 package fr.isen.gauthier.projectgroup.Network
 
-class Bleu {
-}
+data class Teleski (
+    val name:String
+)
+

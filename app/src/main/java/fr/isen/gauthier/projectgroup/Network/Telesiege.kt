@@ -1,4 +1,5 @@
 package fr.isen.gauthier.projectgroup.Network
 
-class Vert {
-}
+data class Telesiege (
+    val name: String
+)

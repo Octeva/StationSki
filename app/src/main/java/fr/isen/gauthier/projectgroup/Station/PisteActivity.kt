@@ -36,6 +36,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
+import fr.isen.gauthier.projectgroup.Network.Couleurs
 import fr.isen.gauthier.projectgroup.Station.ui.theme.ProjectGroupTheme
 
 class PisteActivity : ComponentActivity() {
@@ -48,11 +49,11 @@ class PisteActivity : ComponentActivity() {
 }
 
 @Composable
-fun GetData(lifts: SnapshotStateList<Lift>) {
+fun GetData(lifts: SnapshotStateList<Couleurs>) {
     CallDataBase.database.getReference("name")
         .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val _lifts = snapshot.children.mapNotNull { it.getValue(Lift::class.java) }
+                val _lifts = snapshot.children.mapNotNull { it.getValue(Couleurs::class.java) }
                 Log.d("database", lifts.toString())
                 lifts.addAll(_lifts)
             }
