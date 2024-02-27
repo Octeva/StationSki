@@ -1,7 +1,7 @@
 package fr.isen.gauthier.projectgroup.Network
 
 data class Cross (
-    val end: List<String>,
-    val start: List<String>,
-    val middle: List<String>
+    var end: List<String> = listOf(),
+    var start: List<String> = listOf(),
+    var middle: List<String> = listOf()
 )
