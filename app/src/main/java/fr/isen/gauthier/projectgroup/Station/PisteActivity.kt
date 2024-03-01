@@ -83,8 +83,11 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
             override fun onCancelled(error: DatabaseError) {
                 Log.e("dataBase", error.toString())
             }
-        })
+        }
+    )
 }
+
+
 
 @Composable
 fun test(category: PisteCategory) {
