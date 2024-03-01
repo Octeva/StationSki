@@ -40,9 +40,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.firestore.auth.User
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Station.PisteActivity
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
+import fr.isen.gauthier.projectgroup.Network.SaveDetail
 import fr.isen.gauthier.projectgroup.R
 import fr.isen.gauthier.projectgroup.ui.theme.ProjectGroupTheme
 import java.io.Serializable
@@ -83,8 +85,9 @@ class DetailActivity : ComponentActivity() {
                 // Meteo sur la piste en fonction du dernier utilisateur qui a renseigné
 
 
+                StatePiste(Piste(), SaveDetail())
+                UserStatePiste(Piste(), SaveDetail())
 
-            StatePiste(Piste())
 
             }
             Box(
@@ -164,10 +167,51 @@ class DetailActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun StatePiste(piste: Piste, saveDetail: SaveDetail){
+    // Utilisez les données sauvegardées pour initialiser vos états
+    Column {
+        val etatText = if (piste.etat) "ouverte" else "fermée"
+        val affluenceText = when (piste.affluence) {
+            0 -> "peu fréquentée"
+            1 -> "moyennement fréquentée"
+            else -> "très fréquentée"
+        }
+        val weatherText = when (piste.visibility) {
+            0 -> "ensoleillée"
+            1 -> "nuageuse"
+            2 -> "brumeuse"
+            3 -> "venteuse"
+            else -> "enneigée"
+        }
+
+        Text(
+            text = "Piste ${piste.name} $etatText",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(10.dp)
+        )
+
+        Text(
+            text = "Piste ${piste.name} $affluenceText",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(10.dp)
+        )
+
+        Text(
+            text = "Piste ${piste.name} $weatherText",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(10.dp)
+        )
+    }
+
+}
 
 
 @Composable
-fun StatePiste(piste: Piste) {
+fun UserStatePiste(piste: Piste, saveDetail: SaveDetail) {
     val etatText = remember { mutableStateOf("") }
     val affluenceText = remember { mutableStateOf("") }
     val weatherText = remember { mutableStateOf("") }
@@ -230,21 +274,21 @@ fun StatePiste(piste: Piste) {
             modifier = Modifier.padding(10.dp))
 
         Row {
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 0
                 weatherText.value = "Soleil"
             }) {
                 Text(text = "Soleil")
             }
 
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 1
                 weatherText.value = "Nuageux"
             }) {
                 Text(text = "Nuage")
             }
 
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 2
                 weatherText.value = "Brouillard"
             }) {
@@ -252,13 +296,15 @@ fun StatePiste(piste: Piste) {
             }
         }
         Row {
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 3
                 weatherText.value = "Venteux"
             }) {
+//                Image(painterResource(R.drawable.venteux),
+//                contentDescription = null)
                 Text(text = "Vent")
             }
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 4
                 weatherText.value = "Neige"
             }) {
@@ -269,6 +315,7 @@ fun StatePiste(piste: Piste) {
     }
 
     Button(onClick = {
+        saveDetail.save(piste)
         Toast.makeText(context, "Piste ${piste.name} enregistrée", Toast.LENGTH_LONG).show()
     }) {
         Text(text = "Enregistrer")
@@ -276,3 +323,13 @@ fun StatePiste(piste: Piste) {
 }
 
 //Text(text = "Quel est l'affluence sur ${piste.name} : ${affluenceText.value}",
+
+@Composable
+fun StateDetail(saveDetail: SaveDetail){
+    // Récupérez les données sauvegardées
+    val savedPiste = saveDetail.getPiste()
+
+    // Passez ces données à StatePiste
+    StatePiste(piste = savedPiste, saveDetail = saveDetail)
+
+}
