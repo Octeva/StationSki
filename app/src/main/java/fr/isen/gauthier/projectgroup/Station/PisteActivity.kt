@@ -62,6 +62,7 @@ class PisteActivity : ComponentActivity() {
     }
 }
 
+/*
 @Composable
 fun GetData(categories: SnapshotStateList<PisteCategory>) {
     CallDataBase.database.getReference("pistes")
@@ -80,7 +81,7 @@ fun GetData(categories: SnapshotStateList<PisteCategory>) {
         }
     )
 }
-
+*/
 
 
 @Composable
