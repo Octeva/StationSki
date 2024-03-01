@@ -153,7 +153,9 @@ fun test(category: PisteCategory) {
                                 Text(
                                     text = piste.name,
                                     fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.Black
+
                                 )
                             }
                         }
