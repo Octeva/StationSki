@@ -99,7 +99,9 @@ fun test(category: PisteCategory) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         itemsIndexed(categories) { index, category ->
             val categoryColor = colors.getOrNull(index % colors.size) ?: Color.Transparent
@@ -126,7 +128,7 @@ fun test(category: PisteCategory) {
                     if (expandedCategoryIndex.value == index) {
                         // Afficher les boutons pour chaque piste de la catégorie
                         category.pistes.forEach { piste ->
-                            Button(
+                            OutlinedButton(
                                 onClick = {
                                     // Afficher le Toast lorsque le bouton est cliqué
                                     //Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
