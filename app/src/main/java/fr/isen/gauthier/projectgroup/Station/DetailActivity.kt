@@ -44,6 +44,7 @@ import com.google.firebase.firestore.auth.User
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Station.PisteActivity
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
+import fr.isen.gauthier.projectgroup.Network.SaveDetail
 import fr.isen.gauthier.projectgroup.R
 import fr.isen.gauthier.projectgroup.ui.theme.ProjectGroupTheme
 import java.io.Serializable
@@ -84,8 +85,8 @@ class DetailActivity : ComponentActivity() {
                 // Meteo sur la piste en fonction du dernier utilisateur qui a renseigné
 
 
-                StatePiste(Piste())
-                UserStatePiste(Piste())
+                StatePiste(Piste(), SaveDetail())
+                UserStatePiste(Piste(), SaveDetail())
 
 
             }
@@ -167,69 +168,50 @@ class DetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun StatePiste(piste: Piste){
-
+fun StatePiste(piste: Piste, saveDetail: SaveDetail){
+    // Utilisez les données sauvegardées pour initialiser vos états
     Column {
-        if (piste.etat == true){
-            Text(text = "Piste ${piste.name} ouverte",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else {
-            Text(text = "Piste ${piste.name} fermée",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
+        val etatText = if (piste.etat) "ouverte" else "fermée"
+        val affluenceText = when (piste.affluence) {
+            0 -> "peu fréquentée"
+            1 -> "moyennement fréquentée"
+            else -> "très fréquentée"
+        }
+        val weatherText = when (piste.visibility) {
+            0 -> "ensoleillée"
+            1 -> "nuageuse"
+            2 -> "brumeuse"
+            3 -> "venteuse"
+            else -> "enneigée"
         }
 
-        if (piste.affluence == 0){
-            Text(text = "Piste ${piste.name} peu fréquentée",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else if (piste.affluence == 1){
-            Text(text = "Piste ${piste.name} moyennement fréquentée",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else {
-            Text(text = "Piste ${piste.name} très fréquentée",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        }
-        if (piste.visibility == 0){
-            Text(text = "Piste ${piste.name} ensoleillée",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else if (piste.visibility == 1){
-            Text(text = "Piste ${piste.name} nuageuse",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else if (piste.visibility == 2){
-            Text(text = "Piste ${piste.name} brumeuse",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else if (piste.visibility == 3){
-            Text(text = "Piste ${piste.name} venteuse",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        } else {
-            Text(text = "Piste ${piste.name} enneigée",
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier.padding(10.dp))
-        }
+        Text(
+            text = "Piste ${piste.name} $etatText",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(10.dp)
+        )
+
+        Text(
+            text = "Piste ${piste.name} $affluenceText",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(10.dp)
+        )
+
+        Text(
+            text = "Piste ${piste.name} $weatherText",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(10.dp)
+        )
     }
+
 }
 
 
 @Composable
-fun UserStatePiste(piste: Piste) {
+fun UserStatePiste(piste: Piste, saveDetail: SaveDetail) {
     val etatText = remember { mutableStateOf("") }
     val affluenceText = remember { mutableStateOf("") }
     val weatherText = remember { mutableStateOf("") }
@@ -333,6 +315,7 @@ fun UserStatePiste(piste: Piste) {
     }
 
     Button(onClick = {
+        saveDetail.save(piste)
         Toast.makeText(context, "Piste ${piste.name} enregistrée", Toast.LENGTH_LONG).show()
     }) {
         Text(text = "Enregistrer")
@@ -342,8 +325,11 @@ fun UserStatePiste(piste: Piste) {
 //Text(text = "Quel est l'affluence sur ${piste.name} : ${affluenceText.value}",
 
 @Composable
-fun StateDetail(){
-    val stateDetail = remember { mutableStateOf("") }
-    val context = LocalContext.current
+fun StateDetail(saveDetail: SaveDetail){
+    // Récupérez les données sauvegardées
+    val savedPiste = saveDetail.getPiste()
+
+    // Passez ces données à StatePiste
+    StatePiste(piste = savedPiste, saveDetail = saveDetail)
 
 }
