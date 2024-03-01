@@ -1,9 +1,7 @@
 package fr.isen.gauthier.projectgroup
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import com.google.firebase.components.Component
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -36,9 +33,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 
 
@@ -55,11 +51,9 @@ enum class AuthenticationType {
 }
 open class EmailPasswordActivity : ComponentActivity() {
     lateinit var auth: FirebaseAuth
-
     companion object {
         private const val TAG = "EmailPassword"
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
@@ -67,23 +61,18 @@ open class EmailPasswordActivity : ComponentActivity() {
         if(auth.currentUser != null) {
             // Connecté
         }
-
-
-
     }
 }
-
 @Composable
 fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
     val context = LocalContext.current
-
-    // Remember the values entered by the user for email and password
+    // Remember the values entered by the user for email, password and pseudo of the user
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    val pseudoState = remember { mutableStateOf("") }
 
     // Image resource for background
     val backgroundImage = painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs)
-
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -93,8 +82,6 @@ fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
             contentDescription = null,
             modifier = Modifier.fillMaxSize()
         )
-
-
         // Content
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -112,7 +99,6 @@ fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
 
                 )
             )
-
             // TextField for entering email
             TextField(
                 value = emailState.value,
@@ -120,7 +106,6 @@ fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
                 label = { Text("Adresse e-mail") },
                 modifier = Modifier.padding(16.dp)
             )
-
             // TextField for entering password
             TextField(
                 value = passwordState.value,
@@ -137,19 +122,35 @@ fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
                     }
                 )
             )
+if(type == AuthenticationType.SIGNIN) { //on teste si l'utilisateur clique sur sign up -> alors on met le pseudo
+    TextField(
+        value = pseudoState.value,
+        onValueChange = { pseudoState.value = it },
+        label = { Text("Pseudo") },
+        modifier = Modifier.padding(16.dp),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                // You can perform any action here when the user presses the Done button on the keyboard
+            }
+        )
+    )
+}
 
             var AlreadyAccount = type == AuthenticationType.LOGIN // Variable pour suivre l'état de l'action attendue sur la page de connexion
-
             Button(
                 onClick = {
                     val email = emailState.value
                     val password = passwordState.value
+                    val pseudo = pseudoState.value
 
                     if (AlreadyAccount) {
                         signIn(email, password, auth, context as Activity)
                         //sendEmailVerification(auth, context as Activity)
                     } else {
-                        createAccount(email, password, auth, context as Activity)
+                        createAccount(email, password, pseudo, auth, context as Activity)
                         // Autres actions à exécuter après la création de compte
                     }
 
@@ -159,10 +160,7 @@ fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
             ) {
                 Text(text = if (AlreadyAccount) "Connexion" else "Créer le compte")
             }
-
             Spacer(modifier = Modifier.height(90.dp))
-
-
             Button(
                 onClick = {
                     Toast.makeText(context, "Retour à l'accueil", Toast.LENGTH_SHORT).show()
@@ -172,21 +170,17 @@ fun ConnexionScreen(type: AuthenticationType, auth: FirebaseAuth) {
             ) {
                 Text(text = "Retour à la page principale")
             }
-
         }
-
-
     }
 }
-
-
-
-private fun createAccount(email: String, password: String, auth: FirebaseAuth, activity: Activity) {
-
+private fun createAccount(email: String, password: String, pseudo: String, auth: FirebaseAuth, activity: Activity) {
     // [START create_user_with_email]
     auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener(activity) { task ->
             if (task.isSuccessful) {
+                auth.currentUser?.updateProfile(userProfileChangeRequest {
+                    displayName = pseudo //ici lorsque le compte est créé, on connecte le pseudo avec l'identifiant qui a été créé sur firebase, et après on veut que ça nous mène à la page Bienvenue
+                })
                 // Sign in success, update UI with the signed-in user's information
                 Log.d("TAG", "createUserWithEmail:success")
                 val user = auth.currentUser
@@ -202,7 +196,6 @@ private fun createAccount(email: String, password: String, auth: FirebaseAuth, a
         }
     // [END create_user_with_email]
 }
-
 private fun signIn(email: String, password: String, auth: FirebaseAuth, activity: Activity) {
     // [START sign_in_with_email]
     auth.signInWithEmailAndPassword(email, password)
@@ -224,7 +217,6 @@ private fun signIn(email: String, password: String, auth: FirebaseAuth, activity
         }
     // [END sign_in_with_email]
 }
-
 private fun sendEmailVerification(auth: FirebaseAuth, activity: Activity) {
     // [START send_email_verification]
     val user = auth.currentUser
@@ -234,7 +226,6 @@ private fun sendEmailVerification(auth: FirebaseAuth, activity: Activity) {
         }
     // [END send_email_verification]
 }
-
 //private fun updateUI(user: FirebaseUser?, auth: FirebaseAuth) {
 //}
 

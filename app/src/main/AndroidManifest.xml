@@ -25,7 +25,7 @@
             android:label="@string/title_activity_piste"
             android:theme="@style/Theme.ProjectGroup" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".SignUpActivity"
             android:exported="false" />
         <activity
             android:name=".LogInActivity"
@@ -34,7 +34,12 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="MainActivity"
-            android:theme="@style/Theme.ProjectGroup" />
+            android:theme="@style/Theme.ProjectGroup" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity
             android:name=".Station.RemonteActivity"
             android:exported="false"
@@ -45,11 +50,7 @@
             android:exported="true"
             android:label="Bienvenu"
             android:theme="@style/Theme.ProjectGroup">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
