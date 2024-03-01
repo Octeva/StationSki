@@ -1,5 +1,7 @@
 package fr.isen.gauthier.projectgroup.Network
 
+import java.io.Serializable
+
 data class Remontee (
     val difficulty : Int = 0,
     val endRemontee : List<Remontee> = listOf(),
@@ -7,7 +9,7 @@ data class Remontee (
     val name : String = "",
     val startRemontee : List<DebutR> = listOf(),
     val  waiting : Int = 0
-)
+) : Serializable
 
 class RemonteCategory (
     var code: String = "",
