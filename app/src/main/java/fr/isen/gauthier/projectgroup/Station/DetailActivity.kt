@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.firestore.auth.User
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Station.PisteActivity
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
@@ -84,8 +85,9 @@ class DetailActivity : ComponentActivity() {
                 // Meteo sur la piste en fonction du dernier utilisateur qui a renseigné
 
 
+                StatePiste(Piste())
+                UserStatePiste(Piste())
 
-            StatePiste(Piste())
 
             }
             Box(
@@ -165,10 +167,70 @@ class DetailActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun StatePiste(piste: Piste){
+
+    Column {
+        if (piste.etat == true){
+            Text(text = "Piste ${piste.name} ouverte",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else {
+            Text(text = "Piste ${piste.name} fermée",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        }
+
+        if (piste.affluence == 0){
+            Text(text = "Piste ${piste.name} peu fréquentée",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else if (piste.affluence == 1){
+            Text(text = "Piste ${piste.name} moyennement fréquentée",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else {
+            Text(text = "Piste ${piste.name} très fréquentée",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        }
+        if (piste.visibility == 0){
+            Text(text = "Piste ${piste.name} ensoleillée",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else if (piste.visibility == 1){
+            Text(text = "Piste ${piste.name} nuageuse",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else if (piste.visibility == 2){
+            Text(text = "Piste ${piste.name} brumeuse",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else if (piste.visibility == 3){
+            Text(text = "Piste ${piste.name} venteuse",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        } else {
+            Text(text = "Piste ${piste.name} enneigée",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(10.dp))
+        }
+    }
+}
 
 
 @Composable
-fun StatePiste(piste: Piste) {
+fun UserStatePiste(piste: Piste) {
     val etatText = remember { mutableStateOf("") }
     val affluenceText = remember { mutableStateOf("") }
     val weatherText = remember { mutableStateOf("") }
@@ -231,21 +293,21 @@ fun StatePiste(piste: Piste) {
             modifier = Modifier.padding(10.dp))
 
         Row {
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 0
                 weatherText.value = "Soleil"
             }) {
                 Text(text = "Soleil")
             }
 
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 1
                 weatherText.value = "Nuageux"
             }) {
                 Text(text = "Nuage")
             }
 
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 2
                 weatherText.value = "Brouillard"
             }) {
@@ -253,13 +315,15 @@ fun StatePiste(piste: Piste) {
             }
         }
         Row {
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 3
                 weatherText.value = "Venteux"
             }) {
+//                Image(painterResource(R.drawable.venteux),
+//                contentDescription = null)
                 Text(text = "Vent")
             }
-            Button(onClick = {
+            OutlinedButton(onClick = {
                 piste.visibility = 4
                 weatherText.value = "Neige"
             }) {
@@ -277,3 +341,10 @@ fun StatePiste(piste: Piste) {
 }
 
 //Text(text = "Quel est l'affluence sur ${piste.name} : ${affluenceText.value}",
+
+@Composable
+fun StateDetail(){
+    val stateDetail = remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+}
