@@ -1,4 +1,4 @@
-package fr.isen.gauthier.projectgroup
+package fr.isen.gauthier.projectgroup.Station
 
 import android.content.Intent
 import android.os.Bundle
@@ -29,8 +29,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
-import fr.isen.gauthier.projectgroup.Station.PisteActivity
-import fr.isen.gauthier.projectgroup.Station.RemonteActivity
+import fr.isen.gauthier.projectgroup.R
 
 
 class Bienvenu : ComponentActivity() {

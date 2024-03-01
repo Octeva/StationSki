@@ -45,6 +45,7 @@
             android:label="Bienvenu"
             android:theme="@style/Theme.ProjectGroup">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
