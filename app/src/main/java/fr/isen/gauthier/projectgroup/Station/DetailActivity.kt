@@ -1,17 +1,24 @@
 package fr.isen.gauthier.projectgroup.Station
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -24,7 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -48,9 +58,11 @@ class DetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val piste = intent.getSerializableExtra(DETAIL_EXTRA_KEY) as? Piste
 
+
         super.onCreate(savedInstanceState)
 
         setContent {
+            val context = LocalContext.current
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 piste?. let {
                     Text(
@@ -76,6 +88,79 @@ class DetailActivity : ComponentActivity() {
             StatePiste(Piste())
 
             }
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                BottomAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .shadow(elevation = 8.dp)
+                        .background(color = colorResource(id = R.color.purple_500))
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(context, PisteActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(context, RemonteActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable._205016),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(context, Bienvenu::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable.picto_maison_png),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable.refresh_icon),
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+
+
         }
     }
 }
