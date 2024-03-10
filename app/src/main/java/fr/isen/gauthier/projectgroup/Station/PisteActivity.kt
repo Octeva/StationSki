@@ -2,7 +2,6 @@ package fr.isen.gauthier.projectgroup.Station
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,8 +19,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -48,7 +44,7 @@ import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
 import fr.isen.gauthier.projectgroup.R
-import fr.isen.gauthier.projectgroup.Station.DetailActivity
+import fr.isen.gauthier.projectgroup.Station.DetailPisteActivity
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -137,10 +133,10 @@ fun test(category: PisteCategory) {
                                 onClick = {
                                     // Afficher le Toast lorsque le bouton est cliqué
                                     //Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(context, DetailActivity::class.java)
+                                    val intent = Intent(context, DetailPisteActivity::class.java)
 
                                     //intent.putExtra(DetailActivity., pistes)
-                                    intent.putExtra(DetailActivity.DETAIL_EXTRA_KEY, piste)
+                                    intent.putExtra(DetailPisteActivity.DETAIL_EXTRA_KEY, piste)
                                     context.startActivity(intent)
                                 },
                                 modifier = Modifier
@@ -199,7 +195,7 @@ fun test(category: PisteCategory) {
             }
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(context, Bienvenu::class.java)
+                    val intent = Intent(context, WelcomeActivity::class.java)
                     context.startActivity(intent)
                 },
                 modifier = Modifier.weight(1f)
