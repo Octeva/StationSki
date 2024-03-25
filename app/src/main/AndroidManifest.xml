@@ -34,12 +34,8 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="MainActivity"
-            android:theme="@style/Theme.ProjectGroup" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        </activity>
+            android:theme="@style/Theme.ProjectGroup" />
+
         <activity
             android:name=".Station.RemonteActivity"
             android:exported="false"
@@ -50,8 +46,12 @@
             android:exported="true"
             android:label="Bienvenu"
             android:theme="@style/Theme.ProjectGroup">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
