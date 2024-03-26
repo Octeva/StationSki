@@ -52,6 +52,7 @@ import fr.isen.gauthier.projectgroup.Network.PisteCategory
 import fr.isen.gauthier.projectgroup.Network.getPisteEtat
 import fr.isen.gauthier.projectgroup.Network.setPisteAffluence
 import fr.isen.gauthier.projectgroup.Network.setPisteEtat
+import fr.isen.gauthier.projectgroup.Network.setPisteMeteo
 import fr.isen.gauthier.projectgroup.R
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
@@ -76,6 +77,7 @@ class DetailPisteActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val etatPiste = remember { mutableStateOf(piste?.etat ?: false) }
                 val affluencePiste = remember { mutableStateOf(piste?.affluence ?: 0) }
+                val meteoPiste = remember { mutableStateOf(piste?.visibility ?: 0) }
                 Surface {
 
 
@@ -112,8 +114,8 @@ class DetailPisteActivity : ComponentActivity() {
                         }
 
                         //Fonction Pour afficher les details de la piste entrer par les utilisateurs
-                        DetailPiste(piste = piste!!, etatPiste = etatPiste, affluencePiste = affluencePiste)
-                        ModifierPiste(piste = piste, etatPiste = etatPiste, affluencePiste = affluencePiste)
+                        DetailPiste(piste = piste!!, etatPiste = etatPiste, affluencePiste = affluencePiste, meteoPiste = meteoPiste)
+                        ModifierPiste(piste = piste, etatPiste = etatPiste, affluencePiste = affluencePiste, meteoPiste = meteoPiste)
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.BottomCenter
@@ -194,7 +196,7 @@ class DetailPisteActivity : ComponentActivity() {
 }
 
 @Composable
-fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: MutableState<Int>) {
+fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: MutableState<Int>, meteoPiste: MutableState<Int>) {
     Column {
         Text(
             text = "Piste : ${if (etatPiste.value) "Ouverte" else "Fermée"}",
@@ -209,7 +211,7 @@ fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: 
             modifier = Modifier.padding(top = 15.dp, end = 5.dp, start = 15.dp)
         )
         Text(
-            text = "Metéo sur la Piste : ",
+            text = "Metéo sur la Piste : ${if (meteoPiste.value == 0) "soleil" else if (meteoPiste.value == 1) "nuageux" else if (meteoPiste.value ==2) "brouillard" else if (meteoPiste.value == 3) "neige" else if (meteoPiste.value == 4) "venteux" else "pluie"}",
             fontSize = 20.sp,
             fontFamily = FontFamily.Serif,
             modifier = Modifier.padding(top = 15.dp, end = 5.dp, start = 15.dp)
@@ -218,9 +220,11 @@ fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: 
 }
 
 @Composable
-fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: MutableState<Int>) {
+fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: MutableState<Int>, meteoPiste: MutableState<Int>) {
     val coroutineScope = rememberCoroutineScope()
     val coroutineScope2 = rememberCoroutineScope()
+    val coroutineScope3 = rememberCoroutineScope()
+
     Column {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -370,7 +374,12 @@ fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste
         ) {
 
             OutlinedButton(
-                onClick = { /*TODO*/ }, modifier = Modifier
+                onClick = {
+                    coroutineScope3.launch {
+                        setPisteMeteo(piste, 0)
+                        meteoPiste.value = 0
+                    }
+                }, modifier = Modifier
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
@@ -380,7 +389,12 @@ fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste
                 )
             }
             OutlinedButton(
-                onClick = { /*TODO*/ }, modifier = Modifier
+                onClick = {
+                    coroutineScope3.launch {
+                        setPisteMeteo(piste, 1)
+                        meteoPiste.value = 1
+                    }
+                }, modifier = Modifier
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
@@ -390,7 +404,12 @@ fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste
                 )
             }
             OutlinedButton(
-                onClick = { /*TODO*/ }, modifier = Modifier
+                onClick = {
+                    coroutineScope3.launch {
+                        setPisteMeteo(piste, 2)
+                        meteoPiste.value = 2
+                    }
+                }, modifier = Modifier
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
@@ -408,7 +427,10 @@ fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste
         ) {
 
             OutlinedButton(
-                onClick = { /*TODO*/ }, modifier = Modifier
+                onClick = { coroutineScope3.launch {
+                    setPisteMeteo(piste, 3)
+                    meteoPiste.value = 3
+                } }, modifier = Modifier
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
@@ -418,7 +440,10 @@ fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste
                 )
             }
             OutlinedButton(
-                onClick = { /*TODO*/ }, modifier = Modifier
+                onClick = { coroutineScope3.launch {
+                    setPisteMeteo(piste, 4)
+                    meteoPiste.value = 4
+                } }, modifier = Modifier
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
@@ -428,7 +453,12 @@ fun ModifierPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste
                 )
             }
             OutlinedButton(
-                onClick = { /*TODO*/ }, modifier = Modifier
+                onClick = {
+                    coroutineScope3.launch {
+                        setPisteMeteo(piste, 5)
+                        meteoPiste.value = 5
+                    }
+                }, modifier = Modifier
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {

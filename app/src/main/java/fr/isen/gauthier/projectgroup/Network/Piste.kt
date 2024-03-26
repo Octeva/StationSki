@@ -92,3 +92,50 @@ suspend fun setPisteAffluence(piste: Piste, affluence: Int) {
         Log.e("Piste", "Piste not found")
     }
 }
+
+
+fun getPisteMeteo(piste: Piste): String {
+    if (piste.visibility == 0){
+        return "Soleil"
+    }
+    else if (piste.visibility == 1){
+        return "nuageux"
+    }
+    else if (piste.visibility == 2){
+        return "brouillard"
+    }
+    else if (piste.visibility == 3){
+        return "neige"
+    }
+    else if (piste.visibility == 4){
+        return "vent"
+    }
+    return "pluie"
+}
+
+suspend fun getPisteMeteoInDatabase(piste: Piste, onMeteoChanged: (String) -> Unit) {
+    val (pisteCategory, pisteIndex) = getPisteCategoryAndIndexByName(piste.name) ?: return
+    val pisteRef = CallDataBase.database.getReference("pistes/${pisteCategory}/${pisteIndex}/visibility")
+    pisteRef.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val visibility = snapshot.getValue(Int::class.java) ?: return
+            onMeteoChanged(if (visibility == 0) "peu fréquentée" else if (visibility == 1) "moyennement fréquentée" else "très fréquentée")
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            Log.e("Piste", "Failed to read value.", error.toException())
+        }
+    })
+}
+
+suspend fun setPisteMeteo(piste: Piste, visibility: Int) {
+    val pisteCategoryAndIndex = getPisteCategoryAndIndexByName(piste.name)
+    if (pisteCategoryAndIndex != null) {
+        val (pisteCategory, pisteIndex) = pisteCategoryAndIndex
+        piste.visibility = visibility
+        val pisteRef = CallDataBase.database.getReference("pistes").child(pisteCategory).child(pisteIndex.toString())
+        pisteRef.setValue(piste)
+    } else {
+        Log.e("Piste", "Piste not found")
+    }
+}
