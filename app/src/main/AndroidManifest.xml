@@ -13,8 +13,11 @@
         android:theme="@style/Theme.ProjectGroup"
         tools:targetApi="31">
         <activity
-            android:name=".Station.DetailRemonteActivity"
-            android:exported="false" />
+            android:name=".Station.DetailRemonteeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ProjectGroup" />
+
+
         <activity
             android:name=".Station.DetailPisteActivity"
             android:exported="false"
@@ -37,7 +40,7 @@
             android:theme="@style/Theme.ProjectGroup" />
 
         <activity
-            android:name=".Station.RemonteActivity"
+            android:name=".Station.RemonteeActivity"
             android:exported="false"
             android:label="@string/title_activity_remonte"
             android:theme="@style/Theme.ProjectGroup" />
@@ -51,6 +54,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
     </application>
 

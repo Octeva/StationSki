@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -74,6 +77,7 @@ class DetailPisteActivity : ComponentActivity() {
             val piste = getPisteByName(pisteName)
 
             setContent {
+
                 val context = LocalContext.current
                 val etatPiste = remember { mutableStateOf(piste?.etat ?: false) }
                 val affluencePiste = remember { mutableStateOf(piste?.affluence ?: 0) }
@@ -141,7 +145,7 @@ class DetailPisteActivity : ComponentActivity() {
                                 }
                                 OutlinedButton(
                                     onClick = {
-                                        val intent = Intent(context, RemonteActivity::class.java)
+                                        val intent = Intent(context, RemonteeActivity::class.java)
                                         context.startActivity(intent)
                                     },
                                     modifier = Modifier.weight(1f)
@@ -198,24 +202,71 @@ class DetailPisteActivity : ComponentActivity() {
 @Composable
 fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: MutableState<Int>, meteoPiste: MutableState<Int>) {
     Column {
-        Text(
-            text = "Piste : ${if (etatPiste.value) "Ouverte" else "Fermée"}",
-            fontSize = 20.sp,
-            fontFamily = FontFamily.Serif,
-            modifier = Modifier.padding(top = 15.dp, end = 5.dp, start = 15.dp)
-        )
-        Text(
-            text = "Affluence sur la Piste : ${if (affluencePiste.value== 0) "Peu frequente" else if (affluencePiste.value == 1) "Moyennement frequentee" else "Tres frequente"}",
-            fontSize = 20.sp,
-            fontFamily = FontFamily.Serif,
-            modifier = Modifier.padding(top = 15.dp, end = 5.dp, start = 15.dp)
-        )
-        Text(
-            text = "Metéo sur la Piste : ${if (meteoPiste.value == 0) "soleil" else if (meteoPiste.value == 1) "nuageux" else if (meteoPiste.value ==2) "brouillard" else if (meteoPiste.value == 3) "neige" else if (meteoPiste.value == 4) "venteux" else "pluie"}",
-            fontSize = 20.sp,
-            fontFamily = FontFamily.Serif,
-            modifier = Modifier.padding(top = 15.dp, end = 5.dp, start = 15.dp)
-        )
+        Card(modifier = Modifier
+            .fillMaxWidth()) {
+
+
+        Row{
+            Text(
+                text = "Etat de la piste :",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+            )
+            val imageEtat: Painter = when (etatPiste.value) {
+                true -> painterResource(id = R.drawable.drapeau_vert)
+                else -> painterResource(id = R.drawable.drapeau_rouge)
+            }
+            Image(
+                painter = imageEtat,
+                contentDescription = null, // Ajustez cette valeur si nécessaire
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .size(50.dp),
+            )
+        }
+        }
+
+        Row{
+            Text(
+                text = "Affluence sur la piste :",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+            )
+            val imageAffluence: Painter = when (affluencePiste.value) {
+                0 -> painterResource(id = R.drawable.peu) // Image pour "soleil"
+                1 -> painterResource(id = R.drawable.moyen) // Image pour "nuageux"
+                else -> painterResource(id = R.drawable.beaucoup) // Image pour "brouillard"
+            }
+            Image(
+                painter = imageAffluence,
+                contentDescription = null, // Ajustez cette valeur si nécessaire
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .size(50.dp),
+            )
+        }
+        Row {
+            Text(
+                text = "Météo sur la piste :",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+            )
+            val imageMeteo: Painter = when (meteoPiste.value) {
+                0 -> painterResource(id = R.drawable.soleil) // Image pour "soleil"
+                1 -> painterResource(id = R.drawable.nuage) // Image pour "nuageux"
+                2 -> painterResource(id = R.drawable.brouillard) // Image pour "brouillard"
+                3 -> painterResource(id = R.drawable.flocon_de_neige) // Image pour "neige"
+                4 -> painterResource(id = R.drawable.venteux) // Image pour "venteux"
+                else -> painterResource(id = R.drawable.pluie) // Image par défaut pour "pluie"
+            }
+            Image(
+                painter = imageMeteo,
+                contentDescription = null, // Ajustez cette valeur si nécessaire
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .size(50.dp),
+            )
+        }
     }
 }
 

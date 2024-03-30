@@ -94,7 +94,7 @@ class WelcomeActivity : ComponentActivity() {
             }
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(context, RemonteActivity::class.java)
+                    val intent = Intent(context, RemonteeActivity::class.java)
                     context.startActivity(intent)
                 },
                 modifier = Modifier.weight(1f)
