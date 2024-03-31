@@ -2,7 +2,6 @@ package fr.isen.gauthier.projectgroup.Station
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,16 +19,14 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,8 +45,10 @@ import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
+import fr.isen.gauthier.projectgroup.Network.getPisteEtat
+import fr.isen.gauthier.projectgroup.Network.getPisteEtatInDatabase
 import fr.isen.gauthier.projectgroup.R
-import fr.isen.gauthier.projectgroup.Station.DetailActivity
+import fr.isen.gauthier.projectgroup.Station.DetailPisteActivity
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -57,35 +57,15 @@ class PisteActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         setContent {
-            test(PisteCategory())
+
+            val etatPiste = remember { mutableStateOf(getPisteEtat(Piste())) }
+            ListePiste(PisteCategory())
         }
     }
 }
 
-/*
 @Composable
-fun GetData(categories: SnapshotStateList<PisteCategory>) {
-    CallDataBase.database.getReference("pistes")
-        .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                //val categories: MutableList<PisteCategory> = mutableListOf()
-                snapshot.children.forEach {
-                    val pistes = it.children.mapNotNull { it.getValue(Piste::class.java) }
-                    categories.add(PisteCategory(it.key ?: "", pistes))
-                }
-                Log.d("database", snapshot.toString())
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("dataBase", error.toString())
-            }
-        }
-    )
-}
-*/
-
-
-@Composable
-fun test(category: PisteCategory) {
+fun ListePiste(category: PisteCategory) {
     val expandedCategoryIndex = remember { mutableStateOf<Int?>(null) }
     val categories = remember { mutableStateListOf<PisteCategory>() }
     val context = LocalContext.current
@@ -119,7 +99,9 @@ fun test(category: PisteCategory) {
                 contentAlignment = Alignment.Center
             ) {
                 Column (
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Affiche le nom de la catégorie
@@ -137,10 +119,11 @@ fun test(category: PisteCategory) {
                                 onClick = {
                                     // Afficher le Toast lorsque le bouton est cliqué
                                     //Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(context, DetailActivity::class.java)
+                                    val intent = Intent(context, DetailPisteActivity::class.java)
 
                                     //intent.putExtra(DetailActivity., pistes)
-                                    intent.putExtra(DetailActivity.DETAIL_EXTRA_KEY, piste)
+                                    intent.putExtra("pisteName", piste.name)
+
                                     context.startActivity(intent)
                                 },
                                 modifier = Modifier
@@ -148,12 +131,18 @@ fun test(category: PisteCategory) {
                                     .fillMaxWidth()
                                     .wrapContentHeight()
                             ) {
+                                val etatPiste = remember { mutableStateOf("Chargement...") }
+
+                                LaunchedEffect(piste) {
+                                    getPisteEtatInDatabase(piste) { etat ->
+                                        etatPiste.value = etat
+                                    }
+                                }
                                 Text(
-                                    text = piste.name,
+                                    text = "${piste.name} : ${etatPiste.value}",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Normal,
                                     color = Color.Black
-
                                 )
                             }
                         }
@@ -187,7 +176,7 @@ fun test(category: PisteCategory) {
             }
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(context, RemonteActivity::class.java)
+                    val intent = Intent(context, RemonteeActivity::class.java)
                     context.startActivity(intent)
                 },
                 modifier = Modifier.weight(1f)
@@ -199,7 +188,7 @@ fun test(category: PisteCategory) {
             }
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(context, Bienvenu::class.java)
+                    val intent = Intent(context, WelcomeActivity::class.java)
                     context.startActivity(intent)
                 },
                 modifier = Modifier.weight(1f)
