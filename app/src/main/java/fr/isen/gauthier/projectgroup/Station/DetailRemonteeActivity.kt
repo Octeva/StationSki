@@ -23,15 +23,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -42,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -74,188 +83,216 @@ class DetailRemonteeActivity : ComponentActivity() {
             val remontee = getRemonteeByName(remonteeName)
 
             setContent {
-
-                val context = LocalContext.current
-                val etatRemontee = remember { mutableStateOf(remontee?.etat ?: false) }
-                val waitingRemontee = remember { mutableStateOf(remontee?.waiting ?: 0) }
-                Surface {
-
-
-                    Column {
-                        Box(contentAlignment = Alignment.Center) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                remontee?.let {
-                                    Text(
-                                        text = it.name,
-                                        fontSize = 40.sp,
-                                        fontFamily = FontFamily.Serif,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(
-                                            top = 16.dp,
-                                            start = 16.dp,
-                                            end = 16.dp,
-                                            bottom = 16.dp
-                                        )
-                                    )
-                                }
-
-                                Text(
-                                    text = "Detail de la piste",
-                                    fontSize = 15.sp,
-                                    fontFamily = FontFamily.Serif,
-                                    fontWeight = FontWeight.Normal,
-                                    fontStyle = FontStyle.Italic,
-                                )
-                            }
-                        }
-
-                        //Fonction Pour afficher les details de la piste entrer par les utilisateurs
-                        remontee?.let { nonNullRemontee ->
-                            // Appel de fonctions avec nonNullRemontee qui est garanti de ne pas être nul
-                            DetailRemontee(remontee = nonNullRemontee, etatRemontee = etatRemontee, waitingRemontee = waitingRemontee)
-                            ModifierRemontee(remontee = nonNullRemontee, etatRemontee = etatRemontee, waitingRemontee = waitingRemontee)
-                        } ?: run {
-                            // Gérer le cas où remontee est nul, par exemple, afficher un message d'erreur ou retourner à l'activité précédente
-                            Toast.makeText(context, "Erreur : Les détails de la remontée ne sont pas disponibles.", Toast.LENGTH_LONG).show()
-                            finish() // Termine cette activité et retourne à l'activité précédente
-                        }
-
-                        //BottomAppBar
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            BottomAppBar(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp)
-                                    .shadow(elevation = 8.dp)
-                                    .background(color = colorResource(id = R.color.purple_500))
-                            ) {
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = Intent(context, PisteActivity::class.java)
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = Intent(context, RemonteeActivity::class.java)
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable._205016),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = Intent(context, WelcomeActivity::class.java)
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.picto_maison_png),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.refresh_icon),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                ScaffoldRemontee(remontee = remontee!!)
             }
 
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>?, waitingRemontee: MutableState<Int>?) {
-    Column {
+fun ScaffoldRemontee(remontee: Remontee) {
+    var presses by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
+    val etatRemontee = remember { mutableStateOf(remontee?.etat ?: false) }
+    val waitingRemontee = remember { mutableStateOf(remontee?.waiting ?: 0) }
 
-
-
-            Row{
-                Text(
-                    text = "Etat de la remontee :",
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily.Serif,
-                )
-                val imageEtatRemontee: Painter = if (etatRemontee?.value == true) {
-                    painterResource(id = R.drawable.drapeau_vert)
-                } else {
-                    painterResource(id = R.drawable.drapeau_rouge)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        remontee.name,
+                        textAlign = TextAlign.Center,
+                        fontSize = 40.sp,
+                        fontFamily = FontFamily.Serif,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 16.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
+                    )
                 }
-                Image(
-                    painter = imageEtatRemontee,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .size(50.dp),
-                )
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .shadow(elevation = 8.dp)
+                    .background(color = colorResource(id = R.color.purple_500))
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(context, PisteActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(context, RemonteeActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable._205016),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(context, WelcomeActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.picto_maison_png),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.refresh_icon),
+                        contentDescription = null
+                    )
+                }
             }
-
-            Row {
-                Text(
-                    text = "Temps d'attente à la remontée : ",
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily.Serif,
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            //Fonction Pour afficher les details de la piste entrer par les utilisateurs
+            remontee?.let { nonNullRemontee ->
+                // Appel de fonctions avec nonNullRemontee qui est garanti de ne pas être nul
+                DetailRemontee(
+                    remontee = nonNullRemontee,
+                    etatRemontee = etatRemontee,
+                    waitingRemontee = waitingRemontee
                 )
-                val imageWaiting: Painter = when (waitingRemontee?.value) {
-                    0 -> painterResource(id = R.drawable.min5) // Image pour "soleil"
-                    1 -> painterResource(id = R.drawable.min10) // Image pour "nuageux"
-                    2 -> painterResource(id = R.drawable.min15) // Image pour "brouillard"
-                    3 -> painterResource(id = R.drawable.min20) // Image pour "neige"
-                    else -> painterResource(id = R.drawable.min25) // Image pour "venteux"
-                    }
-                Image(
-                    painter = imageWaiting,
-                    contentDescription = null, // Ajustez cette valeur si nécessaire
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .size(50.dp),
+                ModifierRemontee(
+                    remontee = nonNullRemontee,
+                    etatRemontee = etatRemontee,
+                    waitingRemontee = waitingRemontee
                 )
+            } ?: run {
+                // Gérer le cas où remontee est nul, par exemple, afficher un message d'erreur ou retourner à l'activité précédente
+                Toast.makeText(
+                    context,
+                    "Erreur : Les détails de la remontée ne sont pas disponibles.",
+                    Toast.LENGTH_LONG
+                ).show()
+//                finish() // Termine cette activité et retourne à l'activité précédente
             }
+        }
     }
 }
 
 @Composable
-fun ModifierRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>, waitingRemontee: MutableState<Int>) {
+fun DetailRemontee(
+    remontee: Remontee,
+    etatRemontee: MutableState<Boolean>?,
+    waitingRemontee: MutableState<Int>?
+) {
+    Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
+
+
+        Row {
+            Text(
+                text = "Etat de la remontee :",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+            )
+            val imageEtatRemontee: Painter = if (etatRemontee?.value == true) {
+                painterResource(id = R.drawable.drapeau_vert)
+            } else {
+                painterResource(id = R.drawable.drapeau_rouge)
+            }
+            Image(
+                painter = imageEtatRemontee,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .size(50.dp),
+            )
+        }
+
+        Row {
+            Text(
+                text = "Temps d'attente à la remontée : ",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Serif,
+            )
+            val imageWaiting: Painter = when (waitingRemontee?.value) {
+                0 -> painterResource(id = R.drawable.min5) // Image pour "soleil"
+                1 -> painterResource(id = R.drawable.min10) // Image pour "nuageux"
+                2 -> painterResource(id = R.drawable.min15) // Image pour "brouillard"
+                3 -> painterResource(id = R.drawable.min20) // Image pour "neige"
+                else -> painterResource(id = R.drawable.min25) // Image pour "venteux"
+            }
+            Image(
+                painter = imageWaiting,
+                contentDescription = null, // Ajustez cette valeur si nécessaire
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .size(50.dp),
+            )
+        }
+        Text(
+            text = "Pistes à la fin de la remontée :",
+            fontSize = 20.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier.padding(top = 10.dp)
+        )
+        remontee.endRemontee.first().startPiste.forEach {
+            Text(
+                text = "- $it",
+                fontSize = 15.sp,
+                fontFamily = FontFamily.Serif,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun ModifierRemontee(
+    remontee: Remontee,
+    etatRemontee: MutableState<Boolean>,
+    waitingRemontee: MutableState<Int>
+) {
     val coroutineScope = rememberCoroutineScope()
     val coroutineScope1 = rememberCoroutineScope()
 
@@ -356,8 +393,10 @@ fun ModifierRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>, wa
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
-                Text(text = "5 min",
-                    color = colorResource(id = R.color.black))
+                Text(
+                    text = "5 min",
+                    color = colorResource(id = R.color.black)
+                )
             }
             OutlinedButton(
                 onClick = {
@@ -369,8 +408,10 @@ fun ModifierRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>, wa
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
-                Text(text = "10 min",
-                    color = colorResource(id = R.color.black))
+                Text(
+                    text = "10 min",
+                    color = colorResource(id = R.color.black)
+                )
             }
             OutlinedButton(
                 onClick = {
@@ -382,8 +423,10 @@ fun ModifierRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>, wa
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
-                Text(text = "15 min",
-                    color = colorResource(id = R.color.black))
+                Text(
+                    text = "15 min",
+                    color = colorResource(id = R.color.black)
+                )
             }
         }
         Row(
@@ -403,8 +446,10 @@ fun ModifierRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>, wa
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
-                Text(text = "20 min",
-                    color = colorResource(id = R.color.black))
+                Text(
+                    text = "20 min",
+                    color = colorResource(id = R.color.black)
+                )
             }
             OutlinedButton(
                 onClick = {
@@ -416,19 +461,22 @@ fun ModifierRemontee(remontee: Remontee, etatRemontee: MutableState<Boolean>, wa
                     .height(35.dp)
                     .padding(start = 15.dp)
             ) {
-                Text(text = "25 min",
-                color = colorResource(id = R.color.black))    }
+                Text(
+                    text = "25 min",
+                    color = colorResource(id = R.color.black)
+                )
+            }
         }
 
-        Button(
-            onClick = {
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, end = 10.dp, start = 10.dp)
-        ) {
-            Text(text = "Valider les modifications")
-        }
+//        Button(
+//            onClick = {
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 20.dp, end = 10.dp, start = 10.dp)
+//        ) {
+//            Text(text = "Valider les modifications")
+//        }
     }
 }
 
