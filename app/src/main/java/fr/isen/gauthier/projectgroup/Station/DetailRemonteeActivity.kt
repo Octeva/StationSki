@@ -58,6 +58,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
+import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.Remontee
 import fr.isen.gauthier.projectgroup.Network.setPisteMeteo
 import fr.isen.gauthier.projectgroup.Network.setRemonteeEtat
@@ -207,6 +208,7 @@ fun ScaffoldRemontee(remontee: Remontee) {
                     etatRemontee = etatRemontee,
                     waitingRemontee = waitingRemontee
                 )
+
             } ?: run {
                 // Gérer le cas où remontee est nul, par exemple, afficher un message d'erreur ou retourner à l'activité précédente
                 Toast.makeText(
@@ -226,6 +228,21 @@ fun DetailRemontee(
     etatRemontee: MutableState<Boolean>?,
     waitingRemontee: MutableState<Int>?
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val pistes = remember { mutableStateOf(listOf<Piste>()) }
+
+    LaunchedEffect(remontee) {
+        coroutineScope.launch {
+            remontee.endRemontee.first().startPiste.forEach() { pisteName ->
+                val piste = getPisteByName(pisteName)
+                if (piste != null) {
+                    pistes.value += piste
+                }
+            }
+
+        }
+    }
+
     Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
 
 
@@ -270,15 +287,16 @@ fun DetailRemontee(
                     .size(50.dp),
             )
         }
+
         Text(
             text = "Pistes à la fin de la remontée :",
             fontSize = 20.sp,
             fontFamily = FontFamily.Serif,
             modifier = Modifier.padding(top = 10.dp)
         )
-        remontee.endRemontee.first().startPiste.forEach {
+        pistes.value.forEach { piste ->
             Text(
-                text = "- $it",
+                text = "- ${piste.name} : ${piste.etat.let { if (it) "Ouverte" else "Fermée" }}",
                 fontSize = 15.sp,
                 fontFamily = FontFamily.Serif,
                 modifier = Modifier.padding(top = 10.dp)

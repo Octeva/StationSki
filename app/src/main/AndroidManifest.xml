@@ -47,7 +47,6 @@
         <activity
             android:name=".Station.WelcomeActivity"
             android:exported="true"
-            android:label="Bienvenu"
             android:theme="@style/Theme.ProjectGroup">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
