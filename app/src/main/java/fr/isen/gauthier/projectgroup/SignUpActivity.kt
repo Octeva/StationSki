@@ -8,7 +8,7 @@ class SignUpActivity : EmailPasswordActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ConnexionScreen(AuthenticationType.SIGNIN, auth)
+            ConnexionScreen(AuthenticationType.SIGNIN, auth, this)
         }
     }
 }
