@@ -1,9 +1,7 @@
 package fr.isen.gauthier.projectgroup.Network
 
-import java.io.Serializable
-
-data class DebutR (
+data class StartRemontee (
     val endP : List<String> = listOf(),
     val startP : List<String> = listOf(),
-    val crossP : List<String> = listOf()
-) : Serializable
+    val crossP: List<String> = listOf()
+)

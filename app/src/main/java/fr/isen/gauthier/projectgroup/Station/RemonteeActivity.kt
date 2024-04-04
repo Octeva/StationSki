@@ -105,14 +105,6 @@ fun ListeRemontee(category: RemonteeCategory) {
                         category.remontee.forEach { remontee ->
                             OutlinedButton(
                                 onClick = {
-                                    // Afficher le Toast lorsque le bouton est cliqué
-//                                    Toast.makeText(
-//                                        context,
-//                                        "Vous voulez aller à ${remontee.name}",
-//                                        Toast.LENGTH_SHORT
-//
-//
-//                                    ).show()
                                     val intent = Intent(context, DetailRemonteeActivity::class.java)
                                     intent.putExtra("remonteeName", remontee.name)
                                     context.startActivity(intent)

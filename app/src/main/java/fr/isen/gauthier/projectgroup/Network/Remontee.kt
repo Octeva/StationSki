@@ -5,14 +5,13 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
-import fr.isen.gauthier.projectgroup.Station.getPisteCategoryAndIndexByName
 import fr.isen.gauthier.projectgroup.Station.getRemonteeCategoryAndIndexByName
 import java.io.Serializable
 data class Remontee (
 
     var waiting: Int = 0,
     var endRemontee: List<EndRemontee> = listOf(),
-    var startRemontee: List<DebutR> = listOf(),
+    var startRemontee: List<StartRemontee> = listOf(),
     var etat : Boolean = true,
     var name: String = " ",
 ): Serializable
