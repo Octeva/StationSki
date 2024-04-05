@@ -12,10 +12,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -35,14 +37,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
+import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.Remontee
 import fr.isen.gauthier.projectgroup.Network.RemonteeCategory
+import fr.isen.gauthier.projectgroup.Network.getPisteEtat
+import fr.isen.gauthier.projectgroup.Network.getRemonteeEtat
 import fr.isen.gauthier.projectgroup.Network.getRemonteeEtatInDatabase
 import fr.isen.gauthier.projectgroup.Station.DetailRemonteeActivity
 import fr.isen.gauthier.projectgroup.R
@@ -54,6 +60,7 @@ class RemonteeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val etatRemontee = remember { mutableStateOf(getRemonteeEtat(Remontee())) }
             ListeRemontee(RemonteeCategory())
         }
     }
@@ -73,39 +80,60 @@ fun ListeRemontee(category: RemonteeCategory) {
     }
     val colors = listOf(Color.Cyan, Color.Red)
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        itemsIndexed(categories) { index, category ->
-            val categoryColor = colors.getOrNull(index % colors.size) ?: Color.Transparent
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            itemsIndexed(categories) { index, category ->
+                val categoryColor = colors.getOrNull(index % colors.size) ?: Color.Transparent
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .background(color = categoryColor)
-                    .padding(16.dp)
-                    .clickable {
-                        expandedCategoryIndex.value = index
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Column {
-                    // Affiche le nom de la catégorie
-                    Text(
-                        text = category.codeR,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .background(color = categoryColor)
+                            .clickable {
+                                expandedCategoryIndex.value = index
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        // Affiche le nom de la catégorie
+                        Text(
+                            text = category.codeR,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                     // Si l'index de la catégorie est le même que l'index de la catégorie actuellement étendue
                     if (expandedCategoryIndex.value == index) {
+                        val openRemontee = category.remontee.filter { it.etat }
+                        val closedRemontee = category.remontee.filter { !it.etat }
+                        val sortedRemontee = openRemontee + closedRemontee
+
                         // Afficher les boutons pour chaque remontee de la catégorie
-                        category.remontee.forEach { remontee ->
+                        sortedRemontee.forEach { remontee ->
                             OutlinedButton(
                                 onClick = {
-                                    val intent = Intent(context, DetailRemonteeActivity::class.java)
+                                    val intent =
+                                        Intent(context, DetailRemonteeActivity::class.java)
                                     intent.putExtra("remonteeName", remontee.name)
                                     context.startActivity(intent)
                                 },
@@ -114,21 +142,23 @@ fun ListeRemontee(category: RemonteeCategory) {
                                     .fillMaxWidth()
                                     .wrapContentHeight()
                             ) {
-                                val etatRemontee = remember { mutableStateOf("Chargement...") }
-
-                                LaunchedEffect(remontee) {
-                                    getRemonteeEtatInDatabase(remontee) { etat ->
-                                        etatRemontee.value = etat
-                                    }
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ){
+                                    Text(
+                                        text = remontee.name,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.Black
+                                    )
+                                    Image(
+                                        painterResource(if (remontee.etat) R.drawable.aaaa else R.drawable.bbbbb),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .padding(start = 8.dp)
+                                    )
                                 }
-
-                                Text(
-                                    text = "${remontee.name} : ${etatRemontee.value}",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.Black
-
-                                )
                             }
                         }
                     }
