@@ -28,6 +28,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import fr.isen.gauthier.projectgroup.Station.WelcomeActivity
 import fr.isen.gauthier.projectgroup.ui.theme.ProjectGroupTheme
 
 
@@ -36,36 +39,43 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ProjectGroupTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                val auth = Firebase.auth
+                val activity = LocalContext.current
+                if (auth.currentUser != null) {
+                    val intent = Intent(activity, WelcomeActivity::class.java)
+                    activity.startActivity(intent)
+                } else {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
 
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Image(
-                            painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth() // occupe toute la largeur disponible
-                                .fillMaxSize()
-                                .fillMaxHeight() // occupe toute la hauteur disponible
-                                .padding(0.dp) // supprime le padding
-                                //.scale(0.9f)
-                        )// réduit la taille de l'image
-
-
-                        //Greeting("Android")
-
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        Box(
+                            modifier = Modifier.fillMaxSize()
                         ) {
+                            Image(
+                                painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth() // occupe toute la largeur disponible
+                                    .fillMaxSize()
+                                    .fillMaxHeight() // occupe toute la hauteur disponible
+                                    .padding(0.dp) // supprime le padding
+                                //.scale(0.9f)
+                            )// réduit la taille de l'image
 
-                            AuthentificationScreen()
+
+                            //Greeting("Android")
+
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                AuthentificationScreen()
+                            }
                         }
                     }
                 }
@@ -73,6 +83,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun AuthentificationScreen() {
     val context = LocalContext.current
@@ -91,12 +102,13 @@ fun AuthentificationScreen() {
                 // Vous pouvez également spécifier d'autres propriétés de style comme fontWeight, fontStyle, etc. si nécessaire
                 color = Color.White
 
-                )
+            )
         )
         Button(
             onClick = {
                 val intent = Intent(context, LogInActivity::class.java)
-                context.startActivity(intent)  },
+                context.startActivity(intent)
+            },
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
@@ -106,7 +118,8 @@ fun AuthentificationScreen() {
         Button(
             onClick = {
                 val intent = Intent(context, SignUpActivity::class.java)
-                context.startActivity(intent) },
+                context.startActivity(intent)
+            },
             modifier = Modifier.padding(16.dp)
         ) {
             Text(text = "Sign up")
@@ -116,11 +129,12 @@ fun AuthentificationScreen() {
     // Bouton en bas à droite
 
 }
+
 @Preview(showBackground = true)
 @Composable
 fun AuthentificationScreenPreview() {
     ProjectGroupTheme {
-       // AuthentificationScreen()
+        // AuthentificationScreen()
         // Greeting("Android")
 
     }
@@ -128,9 +142,9 @@ fun AuthentificationScreenPreview() {
 
 //@Composable
 //fun Greeting(name: String, modifier: Modifier = Modifier) {
-  //  Text(
-      //  text = "Hello $name!",
-    //    modifier = modifier
-    //)
+//  Text(
+//  text = "Hello $name!",
+//    modifier = modifier
+//)
 //}
 

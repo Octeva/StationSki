@@ -20,12 +20,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +51,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -78,33 +83,53 @@ class DetailRemonteeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val remonteeName = intent.getSerializableExtra("remonteeName") as String
-
+        val pseudo = intent.getStringExtra("pseudo") ?: ""
 
         lifecycleScope.launch {
             val remontee = getRemonteeByName(remonteeName)
 
             setContent {
-                ScaffoldRemontee(remontee = remontee!!)
+
+                Text(text = "Bienvenue $pseudo !")
+                ScaffoldRemontee(remontee = remontee!!, pseudo = pseudo)
             }
 
         }
     }
 }
 
+//@OptIn(ExperimentalMaterial3Api::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldRemontee(remontee: Remontee) {
+fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
     var presses by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val etatRemontee = remember { mutableStateOf(remontee?.etat ?: false) }
     val waitingRemontee = remember { mutableStateOf(remontee?.waiting ?: 0) }
+
+    // Définissez une liste mutable pour stocker les commentaires
+    val commentaires = remember { mutableStateListOf<String>() }
+    // Définissez un état pour stocker le commentaire entré par l'utilisateur
+    val commentaireText = remember { mutableStateOf("") }
+
+    // Fonction pour ajouter un commentaire
+    val ajouterCommentaire: () -> Unit = {
+        val commentaire = commentaireText.value.trim()
+        if (commentaire.isNotBlank()) {
+            commentaires.add(commentaire)
+            // Effacer le champ de texte après l'ajout du commentaire
+            commentaireText.value = ""
+        }
+    }
+    Log.d("DetailRemonteeActivity", "Pseudo: $pseudo")
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        remontee.name,
+                        "Bienvenue $pseudo !",
+                        //remontee.name,
                         textAlign = TextAlign.Center,
                         fontSize = 40.sp,
                         fontFamily = FontFamily.Serif,
@@ -192,7 +217,8 @@ fun ScaffoldRemontee(remontee: Remontee) {
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()), // Ajoutez un défilement vertical à la colonne
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             //Fonction Pour afficher les details de la piste entrer par les utilisateurs
@@ -208,7 +234,6 @@ fun ScaffoldRemontee(remontee: Remontee) {
                     etatRemontee = etatRemontee,
                     waitingRemontee = waitingRemontee
                 )
-
             } ?: run {
                 // Gérer le cas où remontee est nul, par exemple, afficher un message d'erreur ou retourner à l'activité précédente
                 Toast.makeText(
@@ -218,6 +243,40 @@ fun ScaffoldRemontee(remontee: Remontee) {
                 ).show()
 //                finish() // Termine cette activité et retourne à l'activité précédente
             }
+
+            // Champ de texte pour ajouter un commentaire
+            OutlinedTextField(
+                value = commentaireText.value,
+                onValueChange = { commentaireText.value = it },
+                label = { Text("Ajouter un commentaire") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+
+            // Bouton pour ajouter un commentaire
+            Button(
+                onClick = ajouterCommentaire,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 16.dp, top = 8.dp)
+            ) {
+                Text("Ajouter")
+            }
+
+
+                // Liste des commentaires
+                commentaires.forEach { commentaire ->
+                    Card {
+                    Text(
+                        text = commentaire,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        style = TextStyle(fontStyle = FontStyle.Italic)
+                    )
+                        Text(text = "Commentaire de $pseudo")
+                }
+            }
+
         }
     }
 }
@@ -228,21 +287,6 @@ fun DetailRemontee(
     etatRemontee: MutableState<Boolean>?,
     waitingRemontee: MutableState<Int>?
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val pistes = remember { mutableStateOf(listOf<Piste>()) }
-
-    LaunchedEffect(remontee) {
-        coroutineScope.launch {
-            remontee.endRemontee.first().startPiste.forEach() { pisteName ->
-                val piste = getPisteByName(pisteName)
-                if (piste != null) {
-                    pistes.value += piste
-                }
-            }
-
-        }
-    }
-
     Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
 
 
@@ -287,16 +331,15 @@ fun DetailRemontee(
                     .size(50.dp),
             )
         }
-
         Text(
             text = "Pistes à la fin de la remontée :",
             fontSize = 20.sp,
             fontFamily = FontFamily.Serif,
             modifier = Modifier.padding(top = 10.dp)
         )
-        pistes.value.forEach { piste ->
+        remontee.endRemontee.first().startPiste.forEach {
             Text(
-                text = "- ${piste.name} : ${piste.etat.let { if (it) "Ouverte" else "Fermée" }}",
+                text = "- $it",
                 fontSize = 15.sp,
                 fontFamily = FontFamily.Serif,
                 modifier = Modifier.padding(top = 10.dp)

@@ -3,6 +3,7 @@ package fr.isen.gauthier.projectgroup
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -35,10 +36,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.api.Context
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
+import fr.isen.gauthier.projectgroup.Station.User
 import fr.isen.gauthier.projectgroup.Station.WelcomeActivity
+import fr.isen.gauthier.projectgroup.Station.getUserPseudo
 
 
 enum class AuthenticationType {
@@ -67,24 +75,7 @@ open class EmailPasswordActivity : ComponentActivity() {
         }
     }
 
-    //override fun onStart() {
-    //  super.onStart()
-    //val currentUser = FirebaseAuth.getInstance().currentUser
-    //if (currentUser != null) {
-    // Utilisateur déjà connecté, rediriger vers l'écran d'accueil
-    //  val intent = Intent(this, WelcomeActivity::class.java)
-    //this.startActivity(intent)
-    //}
-    //}
 
-    // override fun onStop() {
-    //  super.onStop()
-    // Déconnexion de l'utilisateur lors de la fermeture de l'application
-    // FirebaseAuth.getInstance().signOut()
-    // Log.d("TAG", "onstop")
-
-    // }
-//}
 
     @Composable
     fun ConnexionScreen(
@@ -99,8 +90,7 @@ open class EmailPasswordActivity : ComponentActivity() {
         val pseudoState = remember { mutableStateOf("") }
 
         // Image resource for background
-        val backgroundImage =
-            painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs)
+        val backgroundImage = painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs)
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -163,8 +153,7 @@ open class EmailPasswordActivity : ComponentActivity() {
                     )
                 }
 
-                var AlreadyAccount =
-                    type == AuthenticationType.LOGIN // Variable pour suivre l'état de l'action attendue sur la page de connexion
+                var AlreadyAccount = type == AuthenticationType.LOGIN // Variable pour suivre l'état de l'action attendue sur la page de connexion
                 Button(
                     onClick = {
                         val email = emailState.value
@@ -198,11 +187,7 @@ open class EmailPasswordActivity : ComponentActivity() {
             }
         }
     }
-//private fun redirectToWelcomeActivity(activity: Activity) {
-//  val intent = Intent(activity, WelcomeActivity::class.java)
-//activity.startActivity(intent)
-//activity.finish() // Fermer l'activité actuelle pour revenir à l'écran précédent
-//}
+
 private fun createAccount(
         email: String,
         password: String,
@@ -228,9 +213,15 @@ private fun createAccount(
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(activity) { createTask ->
                             if (createTask.isSuccessful) {
+                                val firebaseUser = auth.currentUser
+                                if (firebaseUser != null){
+                                    val userId = firebaseUser.uid
+                                    val newUser = User(email = email, pseudo = pseudo)
+                                    saveUserToDatabase(userId, newUser)
+                                    updateProfileWithPseudo(pseudo, firebaseUser)
+                                }
                                 auth.currentUser?.updateProfile(userProfileChangeRequest {
-                                    displayName =
-                                        pseudo //ici lorsque le compte est créé, on connecte le pseudo avec l'identifiant qui a été créé sur Firebase, et après on veut que ça nous mène à la page Bienvenue
+                                    displayName = pseudo //ici lorsque le compte est créé, on connecte le pseudo avec l'identifiant qui a été créé sur Firebase, et après on veut que ça nous mène à la page Bienvenue
                                 })
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("TAG", "createUserWithEmail:success")
@@ -289,9 +280,12 @@ private fun createAccount(
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("TAG", "logInWithEmail:success")
                     Toast.makeText(activity, "Bien connecté.e!", Toast.LENGTH_LONG).show()
-                    val intent = Intent(activity, WelcomeActivity::class.java)
-                    activity.startActivity(intent)
                     val user = auth.currentUser
+                    val pseudo = user?.displayName
+                    val intent = Intent(activity, WelcomeActivity::class.java)
+                    intent.putExtra("pseudo",pseudo)
+                    activity.startActivity(intent)
+
 
                 } else {
                     //échec de la connexion
@@ -304,45 +298,26 @@ private fun createAccount(
                     ).show()
                 }
             }
-        // [END sign_in_with_email]
     }
 
 }
 
+private fun saveUserToDatabase(userId: String, user: User) {
+    val database = FirebaseDatabase.getInstance().reference
+    val userReference = database.child("users").child(userId)
+    userReference.setValue(user)
+}
 
-
-
-
-//private fun sendEmailVerification(auth: FirebaseAuth, activity: Activity) {
-    // [START send_email_verification]
-    //val user = auth.currentUser
-    //user?.sendEmailVerification()
-      //  ?.addOnCompleteListener(activity) { task ->
-            // Email Verification sent
-       // }
-    // [END send_email_verification]
-//}
-//private fun updateUI(user: FirebaseUser?, auth: FirebaseAuth) {
-//}
-
-
-
-
-//private fun redirectToHome(activity: Activity) {
-//  val intent = Intent(activity, WelcomeActivity::class.java)
-//activity.startActivity(intent)
-//activity.finish() // Facultatif : pour fermer l'activité actuelle
-//}
-
-//private fun saveLoginState(context: Context, isLoggedIn: Boolean) {
-//  val sharedPref =
-//    context.getSharedPreferences("login_state", android.content.Context.MODE_PRIVATE)
-//with(sharedPref.edit()) {
-//  putBoolean("isLoggedIn", isLoggedIn)
-//apply()
-//}
-//}
-
-
-
-
+private fun updateProfileWithPseudo(pseudo: String, firebaseUser: FirebaseUser) {
+    val profileUpdates = userProfileChangeRequest {
+        displayName = pseudo
+    }
+    firebaseUser.updateProfile(profileUpdates)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("TAG", "User profile updated.")
+            } else {
+                Log.e("TAG", "Failed to update user profile.")
+            }
+        }
+}

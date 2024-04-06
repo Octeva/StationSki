@@ -37,7 +37,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="MainActivity"
-            android:theme="@style/Theme.ProjectGroup" >
+            android:theme="@style/Theme.ProjectGroup">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -52,10 +52,7 @@
         <activity
             android:name=".Station.WelcomeActivity"
             android:exported="true"
-            android:theme="@style/Theme.ProjectGroup">
-
-        </activity>
-
+            android:theme="@style/Theme.ProjectGroup"/>
 
     </application>
 

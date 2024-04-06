@@ -40,112 +40,212 @@ import android.util.Log
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val pseudo = intent.getStringExtra("pseudo") ?: ""
+        Log.d("WelcomeActivity", "Email: ${pseudo}")
+
         setContent {
-            BasketView()
-        }
-    }
-}
-
-@Composable fun BasketView() {
-    val context = LocalContext.current
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = " Bienvenue ",
-                fontFamily = FontFamily.Default,
-                fontSize = 44.sp,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Image(
-                painterResource(R.drawable.plan_des_pistes_alpin_molines_saint_veran_domaine_beauregard),
-                contentDescription = null,
+            val context = LocalContext.current
+            Log.d("WelcomeView", "Pseudo: $pseudo")
+            Surface(
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .size(350.dp) // Augmentation de la taille de l'image
-            )
-        }
-    }
+                    .fillMaxSize(),
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = " Bienvenue $pseudo",
+                        fontFamily = FontFamily.Default,
+                        fontSize = 44.sp,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Image(
+                        painterResource(R.drawable.plan_des_pistes_alpin_molines_saint_veran_domaine_beauregard),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
+                            .size(350.dp) // Augmentation de la taille de l'image
+                    )
+                }
+            }
 
-Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        BottomAppBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .shadow(elevation = 8.dp)
-                .background(color = colorResource(id = R.color.purple_500))
-        ) {
-            OutlinedButton(
-                onClick = {
-                    val intent = Intent(context, PisteActivity::class.java)
-                    context.startActivity(intent)
-                },
-                modifier = Modifier.weight(1f)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                Image(
-                    painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
-                    contentDescription = null
-                )
+                BottomAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .shadow(elevation = 8.dp)
+                        .background(color = colorResource(id = R.color.purple_500))
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(context, PisteActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(context, RemonteeActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable._205016),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            Toast.makeText(context, "ici", Toast.LENGTH_LONG).show()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable.picto_maison_png),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                            contentDescription = null
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Image(
+                            painterResource(R.drawable.refresh_icon),
+                            contentDescription = null
+                        )
+                    }
+                }
             }
-            OutlinedButton(
-                onClick = {
-                    val intent = Intent(context, RemonteeActivity::class.java)
-                    context.startActivity(intent)
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painterResource(R.drawable._205016),
-                    contentDescription = null
-                )
-            }
-            OutlinedButton(
-                onClick = {
-                    Toast.makeText(context, "ici", Toast.LENGTH_LONG).show()
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painterResource(R.drawable.picto_maison_png),
-                    contentDescription = null
-                )
-            }
-            OutlinedButton(
-                onClick = {
-                    Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
-                    contentDescription = null
-                )
-            }
-            OutlinedButton(
-                onClick = {
-                    Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painterResource(R.drawable.refresh_icon),
-                    contentDescription = null
-                )
-            }
+            DisconnectButton()
         }
     }
-    DisconnectButton()
 }
+
+//@Composable fun BasketView() {
+//    val context = LocalContext.current
+//
+//    Surface(
+//        modifier = Modifier
+//            .fillMaxSize(),
+//    ) {
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Text(
+//                text = " Bienvenue ",
+//                fontFamily = FontFamily.Default,
+//                fontSize = 44.sp,
+//                modifier = Modifier.padding(bottom = 16.dp)
+//            )
+//            Image(
+//                painterResource(R.drawable.plan_des_pistes_alpin_molines_saint_veran_domaine_beauregard),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .padding(bottom = 16.dp)
+//                    .size(350.dp) // Augmentation de la taille de l'image
+//            )
+//        }
+//    }
+//
+//Box(
+//        modifier = Modifier.fillMaxSize(),
+//        contentAlignment = Alignment.BottomCenter
+//    ) {
+//        BottomAppBar(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(56.dp)
+//                .shadow(elevation = 8.dp)
+//                .background(color = colorResource(id = R.color.purple_500))
+//        ) {
+//            OutlinedButton(
+//                onClick = {
+//                    val intent = Intent(context, PisteActivity::class.java)
+//                    context.startActivity(intent)
+//                },
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Image(
+//                    painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+//                    contentDescription = null
+//                )
+//            }
+//            OutlinedButton(
+//                onClick = {
+//                    val intent = Intent(context, RemonteeActivity::class.java)
+//                    context.startActivity(intent)
+//                },
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Image(
+//                    painterResource(R.drawable._205016),
+//                    contentDescription = null
+//                )
+//            }
+//            OutlinedButton(
+//                onClick = {
+//                    Toast.makeText(context, "ici", Toast.LENGTH_LONG).show()
+//                },
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Image(
+//                    painterResource(R.drawable.picto_maison_png),
+//                    contentDescription = null
+//                )
+//            }
+//            OutlinedButton(
+//                onClick = {
+//                    Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
+//                },
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Image(
+//                    painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+//                    contentDescription = null
+//                )
+//            }
+//            OutlinedButton(
+//                onClick = {
+//                    Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+//                },
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Image(
+//                    painterResource(R.drawable.refresh_icon),
+//                    contentDescription = null
+//                )
+//            }
+//        }
+//    }
+//    DisconnectButton()
+//}
 
 
 @Composable
