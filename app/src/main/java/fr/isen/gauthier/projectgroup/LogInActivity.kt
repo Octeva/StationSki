@@ -2,6 +2,7 @@ package fr.isen.gauthier.projectgroup
 
 //import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,12 +24,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+//Si l'utilisateur clique sur "Login", l'activité LogInActivity est chargée, affichant ainsi l'écran de connexion (l'user a déjà un compte)
+
 class LogInActivity : EmailPasswordActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ConnexionScreen(AuthenticationType.LOGIN, auth, this)
         }
+        Log.d("TAG", "login appelée")
+
     }
 }
 

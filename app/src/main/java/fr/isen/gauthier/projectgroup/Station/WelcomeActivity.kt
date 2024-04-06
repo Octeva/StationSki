@@ -26,10 +26,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import fr.isen.gauthier.projectgroup.R
+import com.google.firebase.auth.FirebaseAuth
+import fr.isen.gauthier.projectgroup.MainActivity
+import android.util.Log
+
 
 
 class WelcomeActivity : ComponentActivity() {
@@ -69,7 +74,7 @@ class WelcomeActivity : ComponentActivity() {
         }
     }
 
-    Box(
+Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -138,5 +143,35 @@ class WelcomeActivity : ComponentActivity() {
                 )
             }
         }
+    }
+    DisconnectButton()
+}
+
+
+@Composable
+fun DisconnectButton() {
+    val auth = FirebaseAuth.getInstance()
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            Toast.makeText(context, "Bien déconnecté.e!", Toast.LENGTH_LONG).show()
+            Log.d("TAG", "user déconnecté.e, retour à la page d'authentification")
+            // Déconnexion de l'utilisateur
+            auth.signOut()
+
+            // Redirection vers l'activité d'authentification
+            val intent = Intent(context, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        },
+        modifier = Modifier
+            .padding(8.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo_power_off),
+            contentDescription = "Déconnexion",
+            modifier = Modifier.size(30.dp) //taille de l'image
+        )
     }
 }

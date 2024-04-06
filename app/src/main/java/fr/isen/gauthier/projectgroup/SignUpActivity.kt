@@ -2,7 +2,10 @@ package fr.isen.gauthier.projectgroup
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
+
+//Si l'utilisateur clique sur "Sign up", l'activité SignUpActivity est chargée, affichant ainsi l'écran d'inscription (l'user n'a pas déjà de compte)
 
 class SignUpActivity : EmailPasswordActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -10,6 +13,8 @@ class SignUpActivity : EmailPasswordActivity() {
         setContent {
             ConnexionScreen(AuthenticationType.SIGNIN, auth, this)
         }
+        Log.d("TAG", "signup appelée")
+
     }
 }
 
