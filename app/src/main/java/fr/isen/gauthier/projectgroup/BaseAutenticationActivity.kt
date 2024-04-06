@@ -58,15 +58,12 @@ open class EmailPasswordActivity : ComponentActivity() {
         private const val TAG = "EmailPassword"
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
 
         if (auth.currentUser != null) {
             // L'utilisateur est déjà connecté
-
-
         }
     }
 
@@ -121,23 +118,21 @@ open class EmailPasswordActivity : ComponentActivity() {
             ) {
                 Text(
                     text = type.title(),
-                    //style = MaterialTheme.typography.h5
                     style = TextStyle(
                         fontFamily = FontFamily.Serif, // Changer la famille de police
                         fontSize = 40.sp, // Changer la taille de la police en sp (scaled pixels)
-                        // Vous pouvez également spécifier d'autres propriétés de style comme fontWeight, fontStyle, etc. si nécessaire
                         color = Color.White
 
                     )
                 )
-                // TextField for entering email
+                // TextField pour saisir email
                 TextField(
                     value = emailState.value,
                     onValueChange = { emailState.value = it },
                     label = { Text("Adresse e-mail") },
                     modifier = Modifier.padding(16.dp)
                 )
-                // TextField for entering password
+                // TextField pour saisir password
                 TextField(
                     value = passwordState.value,
                     onValueChange = { passwordState.value = it },
@@ -149,7 +144,6 @@ open class EmailPasswordActivity : ComponentActivity() {
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            // You can perform any action here when the user presses the Done button on the keyboard
                         }
                     )
                 )
@@ -164,7 +158,6 @@ open class EmailPasswordActivity : ComponentActivity() {
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                // You can perform any action here when the user presses the Done button on the keyboard
                             }
                         )
                     )
@@ -186,7 +179,7 @@ open class EmailPasswordActivity : ComponentActivity() {
                             // Autres actions à exécuter après la création de compte
                         }
 
-                        Toast.makeText(context, "Saisie validée!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Saisie validée!", Toast.LENGTH_LONG).show()
                     },
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -195,7 +188,7 @@ open class EmailPasswordActivity : ComponentActivity() {
                 Spacer(modifier = Modifier.height(90.dp))
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Retour à l'accueil", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Retour à l'accueil", Toast.LENGTH_LONG).show()
                         (context as? ComponentActivity)?.finish() // Terminer l'activité actuelle pour revenir à l'écran précédent (HomeActivity) }, // Finish the activity when the button is clicked
                     },
                     modifier = Modifier.padding(16.dp)
@@ -226,7 +219,7 @@ private fun createAccount(
                     Toast.makeText(
                         activity,
                         "Cette adresse e-mail est déjà utilisée.",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                     Log.d("TAG", "already account like this in database : failure")
 
@@ -237,23 +230,33 @@ private fun createAccount(
                             if (createTask.isSuccessful) {
                                 auth.currentUser?.updateProfile(userProfileChangeRequest {
                                     displayName =
-                                        pseudo //ici lorsque le compte est créé, on connecte le pseudo avec l'identifiant qui a été créé sur firebase, et après on veut que ça nous mène à la page Bienvenue
+                                        pseudo //ici lorsque le compte est créé, on connecte le pseudo avec l'identifiant qui a été créé sur Firebase, et après on veut que ça nous mène à la page Bienvenue
                                 })
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("TAG", "createUserWithEmail:success")
                                 Toast.makeText(
                                     activity,
                                     "Compte créé avec succès!",
-                                    Toast.LENGTH_SHORT
+                                    Toast.LENGTH_LONG
                                 ).show()
+                                // Redirection vers l'activité de connexion
+                                val intent = Intent(activity, LogInActivity::class.java)
+                                Log.d("TAG", "go to login to put your credentials after signing up")
+                                Toast.makeText(
+                                    activity,
+                                    "Connectez-vous avec vos coordonnées",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                activity.startActivity(intent)
+                                activity.finish() // Fin de l'activité actuelle pour empêcher l'utilisateur de revenir en arrière
                             } else {
                                 // Échec de la création du compte
-                                Log.w("TAG", "createUserWithEmail:failure", createTask.exception)
+                                Log.w("TAG", "createUserWithEmail :failure", createTask.exception)
 
                                 Toast.makeText(
                                     activity,
-                                    "Erreur lors de la création du compte. Veuillez réessayer.",
-                                    Toast.LENGTH_SHORT
+                                    "Erreur création du compte, veuillez réessayer.",
+                                    Toast.LENGTH_LONG
                                 ).show()
                             }
                         }
@@ -263,9 +266,12 @@ private fun createAccount(
                 // Échec de la vérification de l'adresse e-mail
                 Toast.makeText(
                     activity,
-                    "Erreur lors de la vérification de l'adresse e-mail. Veuillez réessayer.",
-                    Toast.LENGTH_SHORT
+                    "Adresse mail déjà existante, veuillez en choisir une autre",
+                    Toast.LENGTH_LONG
                 ).show()
+                Log.d("TAG", "createUserWithEmail mail address already used in database : failure")
+
+
             }
 
 }
@@ -282,7 +288,7 @@ private fun createAccount(
                     //Connexion réussie
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("TAG", "logInWithEmail:success")
-                    Toast.makeText(activity, "Bien connecté!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Bien connecté.e!", Toast.LENGTH_LONG).show()
                     val intent = Intent(activity, WelcomeActivity::class.java)
                     activity.startActivity(intent)
                     val user = auth.currentUser
@@ -294,7 +300,7 @@ private fun createAccount(
                     Toast.makeText(
                         activity,
                         "Adresse e-mail ou mot de passe incorrect.",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                 }
             }
