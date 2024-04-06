@@ -3,14 +3,11 @@ package fr.isen.gauthier.projectgroup.Station
 import android.content.Intent
 
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +24,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,9 +46,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
-import fr.isen.gauthier.projectgroup.Network.PisteCategory
 //import fr.isen.gauthier.projectgroup.Network.SaveDetailPiste
-import fr.isen.gauthier.projectgroup.Network.getPisteEtat
 import fr.isen.gauthier.projectgroup.Network.setPisteAffluence
 import fr.isen.gauthier.projectgroup.Network.setPisteEtat
 import fr.isen.gauthier.projectgroup.Network.setPisteMeteo
@@ -139,7 +133,7 @@ class DetailPisteActivity : ComponentActivity() {
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Image(
-                                        painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                                        painterResource(R.drawable.pictogramme_ski),
                                         contentDescription = null
                                     )
                                 }
@@ -151,7 +145,7 @@ class DetailPisteActivity : ComponentActivity() {
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Image(
-                                        painterResource(R.drawable._205016),
+                                        painterResource(R.drawable.pictogramme_telecabine),
                                         contentDescription = null
                                     )
                                 }
@@ -163,7 +157,7 @@ class DetailPisteActivity : ComponentActivity() {
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Image(
-                                        painterResource(R.drawable.picto_maison_png),
+                                        painterResource(R.drawable.pictogramme_maison),
                                         contentDescription = null
                                     )
                                 }
@@ -174,7 +168,7 @@ class DetailPisteActivity : ComponentActivity() {
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Image(
-                                        painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                                        painterResource(R.drawable.pictogramme_conversation),
                                         contentDescription = null
                                     )
                                 }

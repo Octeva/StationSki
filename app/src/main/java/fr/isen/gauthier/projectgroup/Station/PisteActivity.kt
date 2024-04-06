@@ -24,7 +24,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,9 +45,7 @@ import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.PisteCategory
 import fr.isen.gauthier.projectgroup.Network.getPisteEtat
-import fr.isen.gauthier.projectgroup.Network.getPisteEtatInDatabase
 import fr.isen.gauthier.projectgroup.R
-import fr.isen.gauthier.projectgroup.Station.DetailPisteActivity
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import androidx.compose.foundation.layout.Row
@@ -150,7 +146,7 @@ fun ListePiste(category: PisteCategory) {
                                         color = Color.Black
                                     )
                                     Image(
-                                        painterResource(if (piste.etat) R.drawable.aaaa else R.drawable.bbbbb),
+                                        painterResource(if (piste.etat) R.drawable.pastille_verte else R.drawable.pastille_rouge),
                                         contentDescription = null,
                                         modifier = Modifier
                                             .size(24.dp)
@@ -188,7 +184,7 @@ fun ListePiste(category: PisteCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                    painterResource(R.drawable.pictogramme_ski),
                     contentDescription = null
                 )
             }
@@ -200,7 +196,7 @@ fun ListePiste(category: PisteCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable._205016),
+                    painterResource(R.drawable.pictogramme_telecabine),
                     contentDescription = null
                 )
             }
@@ -212,7 +208,7 @@ fun ListePiste(category: PisteCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable.picto_maison_png),
+                    painterResource(R.drawable.pictogramme_maison),
                     contentDescription = null
                 )
             }
@@ -223,7 +219,7 @@ fun ListePiste(category: PisteCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                    painterResource(R.drawable.pictogramme_conversation),
                     contentDescription = null
                 )
             }

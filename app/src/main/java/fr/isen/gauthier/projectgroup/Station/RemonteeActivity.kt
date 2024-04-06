@@ -44,13 +44,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
-import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.Remontee
 import fr.isen.gauthier.projectgroup.Network.RemonteeCategory
-import fr.isen.gauthier.projectgroup.Network.getPisteEtat
 import fr.isen.gauthier.projectgroup.Network.getRemonteeEtat
-import fr.isen.gauthier.projectgroup.Network.getRemonteeEtatInDatabase
-import fr.isen.gauthier.projectgroup.Station.DetailRemonteeActivity
 import fr.isen.gauthier.projectgroup.R
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -152,7 +148,7 @@ fun ListeRemontee(category: RemonteeCategory) {
                                         color = Color.Black
                                     )
                                     Image(
-                                        painterResource(if (remontee.etat) R.drawable.aaaa else R.drawable.bbbbb),
+                                        painterResource(if (remontee.etat) R.drawable.pastille_verte else R.drawable.pastille_rouge),
                                         contentDescription = null,
                                         modifier = Modifier
                                             .size(24.dp)
@@ -186,7 +182,7 @@ fun ListeRemontee(category: RemonteeCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                    painterResource(R.drawable.pictogramme_ski),
                     contentDescription = null
                 )
             }
@@ -198,7 +194,7 @@ fun ListeRemontee(category: RemonteeCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable._205016),
+                    painterResource(R.drawable.pictogramme_telecabine),
                     contentDescription = null
                 )
             }
@@ -210,7 +206,7 @@ fun ListeRemontee(category: RemonteeCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable.picto_maison_png),
+                    painterResource(R.drawable.pictogramme_maison),
                     contentDescription = null
                 )
             }
@@ -221,7 +217,7 @@ fun ListeRemontee(category: RemonteeCategory) {
                 modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                    painterResource(R.drawable.pictogramme_conversation),
                     contentDescription = null
                 )
             }

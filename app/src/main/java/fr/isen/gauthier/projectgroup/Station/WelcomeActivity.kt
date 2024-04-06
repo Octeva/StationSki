@@ -62,7 +62,7 @@ class WelcomeActivity : ComponentActivity() {
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Image(
-                        painterResource(R.drawable.plan_des_pistes_alpin_molines_saint_veran_domaine_beauregard),
+                        painterResource(R.drawable.plan_piste),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(bottom = 16.dp)
@@ -90,7 +90,7 @@ class WelcomeActivity : ComponentActivity() {
                         modifier = Modifier.weight(1f)
                     ) {
                         Image(
-                            painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                            painterResource(R.drawable.pictogramme_ski),
                             contentDescription = null
                         )
                     }
@@ -102,7 +102,7 @@ class WelcomeActivity : ComponentActivity() {
                         modifier = Modifier.weight(1f)
                     ) {
                         Image(
-                            painterResource(R.drawable._205016),
+                            painterResource(R.drawable.pictogramme_telecabine),
                             contentDescription = null
                         )
                     }
@@ -113,7 +113,7 @@ class WelcomeActivity : ComponentActivity() {
                         modifier = Modifier.weight(1f)
                     ) {
                         Image(
-                            painterResource(R.drawable.picto_maison_png),
+                            painterResource(R.drawable.pictogramme_maison),
                             contentDescription = null
                         )
                     }
@@ -124,7 +124,7 @@ class WelcomeActivity : ComponentActivity() {
                         modifier = Modifier.weight(1f)
                     ) {
                         Image(
-                            painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                            painterResource(R.drawable.pictogramme_conversation),
                             contentDescription = null
                         )
                     }
@@ -269,7 +269,7 @@ fun DisconnectButton() {
             .padding(8.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_power_off),
+            painter = painterResource(id = R.drawable.power_off),
             contentDescription = "Déconnexion",
             modifier = Modifier.size(30.dp) //taille de l'image
         )

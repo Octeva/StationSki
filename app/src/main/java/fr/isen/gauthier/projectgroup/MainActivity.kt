@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize()
                         ) {
                             Image(
-                                painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs),
+                                painterResource(R.drawable.background_connection),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth() // occupe toute la largeur disponible

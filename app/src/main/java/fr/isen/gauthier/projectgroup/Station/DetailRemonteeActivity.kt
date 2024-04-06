@@ -3,19 +3,15 @@ package fr.isen.gauthier.projectgroup.Station
 import android.content.Intent
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,16 +22,12 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -63,9 +55,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
-import fr.isen.gauthier.projectgroup.Network.Piste
 import fr.isen.gauthier.projectgroup.Network.Remontee
-import fr.isen.gauthier.projectgroup.Network.setPisteMeteo
 import fr.isen.gauthier.projectgroup.Network.setRemonteeEtat
 import fr.isen.gauthier.projectgroup.Network.setRemonteeWaiting
 import fr.isen.gauthier.projectgroup.R
@@ -162,7 +152,7 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Image(
-                        painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
+                        painterResource(R.drawable.pictogramme_ski),
                         contentDescription = null
                     )
                 }
@@ -174,7 +164,7 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Image(
-                        painterResource(R.drawable._205016),
+                        painterResource(R.drawable.pictogramme_telecabine),
                         contentDescription = null
                     )
                 }
@@ -186,7 +176,7 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Image(
-                        painterResource(R.drawable.picto_maison_png),
+                        painterResource(R.drawable.pictogramme_maison),
                         contentDescription = null
                     )
                 }
@@ -197,7 +187,7 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Image(
-                        painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
+                        painterResource(R.drawable.pictogramme_conversation),
                         contentDescription = null
                     )
                 }

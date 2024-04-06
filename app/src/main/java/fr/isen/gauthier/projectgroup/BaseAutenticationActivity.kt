@@ -3,7 +3,6 @@ package fr.isen.gauthier.projectgroup
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import android.app.Activity
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -34,19 +33,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.api.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.userProfileChangeRequest
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import fr.isen.gauthier.projectgroup.Station.User
 import fr.isen.gauthier.projectgroup.Station.WelcomeActivity
-import fr.isen.gauthier.projectgroup.Station.getUserPseudo
 
 
 enum class AuthenticationType {
@@ -90,7 +84,7 @@ open class EmailPasswordActivity : ComponentActivity() {
         val pseudoState = remember { mutableStateOf("") }
 
         // Image resource for background
-        val backgroundImage = painterResource(R.drawable.skier___travers_des_paysages_magiques_aux_arcs)
+        val backgroundImage = painterResource(R.drawable.background_connection)
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
