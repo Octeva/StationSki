@@ -2,6 +2,7 @@ package fr.isen.gauthier.projectgroup
 
 //import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +30,8 @@ class LogInActivity : EmailPasswordActivity() {
         setContent {
             ConnexionScreen(AuthenticationType.LOGIN, auth, this)
         }
+        Log.d("TAG", "login appelée")
+
     }
 }
 

@@ -65,33 +65,30 @@ open class EmailPasswordActivity : ComponentActivity() {
 
         if (auth.currentUser != null) {
             // L'utilisateur est déjà connecté
-            val intent = Intent(this, WelcomeActivity::class.java)
-            this.startActivity(intent)
-        } else {
-            // L'utilisateur n'est pas connecté, démarrer l'écran d'authentification
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
-            finish() // Optionnel : fermer cette activité pour empêcher l'utilisateur de revenir en arrière
+
+
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
-            // Utilisateur déjà connecté, rediriger vers l'écran d'accueil
-            val intent = Intent(this, WelcomeActivity::class.java)
-            this.startActivity(intent)
-        }
-    }
+    //override fun onStart() {
+    //  super.onStart()
+    //val currentUser = FirebaseAuth.getInstance().currentUser
+    //if (currentUser != null) {
+    // Utilisateur déjà connecté, rediriger vers l'écran d'accueil
+    //  val intent = Intent(this, WelcomeActivity::class.java)
+    //this.startActivity(intent)
+    //}
+    //}
 
-    override fun onStop() {
-        super.onStop()
-        // Déconnexion de l'utilisateur lors de la fermeture de l'application
-        FirebaseAuth.getInstance().signOut()
-        Log.d("TAG", "onstop")
+    // override fun onStop() {
+    //  super.onStop()
+    // Déconnexion de l'utilisateur lors de la fermeture de l'application
+    // FirebaseAuth.getInstance().signOut()
+    // Log.d("TAG", "onstop")
 
-    }
+    // }
+//}
+
     @Composable
     fun ConnexionScreen(
         type: AuthenticationType,
@@ -208,36 +205,31 @@ open class EmailPasswordActivity : ComponentActivity() {
             }
         }
     }
-    //private fun redirectToWelcomeActivity(activity: Activity) {
-    //  val intent = Intent(activity, WelcomeActivity::class.java)
-    //activity.startActivity(intent)
-    //activity.finish() // Fermer l'activité actuelle pour revenir à l'écran précédent
-    //}
-
-
-}
-
-
-
-
+//private fun redirectToWelcomeActivity(activity: Activity) {
+//  val intent = Intent(activity, WelcomeActivity::class.java)
+//activity.startActivity(intent)
+//activity.finish() // Fermer l'activité actuelle pour revenir à l'écran précédent
+//}
 private fun createAccount(
-    email: String,
-    password: String,
-    pseudo: String,
-    auth: FirebaseAuth,
-    activity: Activity
+        email: String,
+        password: String,
+        pseudo: String,
+        auth: FirebaseAuth,
+        activity: Activity
 ) {
-    // [START create_user_with_email]
+        // [START create_user_with_email]
 
-    auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener(activity) { signInTask ->
-            if (signInTask.isSuccessful) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(activity) { signInTask ->
+                if (signInTask.isSuccessful) {
                     // L'adresse e-mail est déjà utilisée
                     Toast.makeText(
                         activity,
                         "Cette adresse e-mail est déjà utilisée.",
                         Toast.LENGTH_SHORT
                     ).show()
+                    Log.d("TAG", "already account like this in database : failure")
+
                 } else {
                     // L'adresse e-mail n'est pas déjà utilisée, créer le compte
                     auth.createUserWithEmailAndPassword(email, password)
@@ -277,52 +269,53 @@ private fun createAccount(
             }
 
 }
+    private fun signIn(
+        email: String,
+        password: String,
+        auth: FirebaseAuth,
+        activity: Activity
+    ) {
+        // [START sign_in_with_email]
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(activity) { task ->
+                if (task.isSuccessful) {
+                    //Connexion réussie
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("TAG", "logInWithEmail:success")
+                    Toast.makeText(activity, "Bien connecté!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(activity, WelcomeActivity::class.java)
+                    activity.startActivity(intent)
+                    val user = auth.currentUser
 
-
-
-private fun signIn(
-    email: String,
-    password: String,
-    auth: FirebaseAuth,
-    activity: Activity
-) {
-    // [START sign_in_with_email]
-    auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener(activity) { task ->
-            if (task.isSuccessful) {
-                //Connexion réussie
-                // Sign in success, update UI with the signed-in user's information
-                Log.d("TAG", "signInWithEmail:success")
-                Toast.makeText(activity, "Bien connecté!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(activity, WelcomeActivity::class.java)
-                activity.startActivity(intent)
-                val user = auth.currentUser
-
-            } else {
-                //échec de la connexion
-                // If sign in fails, display a message to the user.
-                Log.w("TAG", "signInWithEmail:failure", task.exception)
-                Toast.makeText(activity, "Adresse e-mail ou mot de passe incorrect.", Toast.LENGTH_SHORT).show()
+                } else {
+                    //échec de la connexion
+                    // If sign in fails, display a message to the user.
+                    Log.w("TAG", "logInWithEmail:failure", task.exception)
+                    Toast.makeText(
+                        activity,
+                        "Adresse e-mail ou mot de passe incorrect.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-        }
-    // [END sign_in_with_email]
+        // [END sign_in_with_email]
+    }
+
 }
 
 
 
 
 
-
-
-    private fun sendEmailVerification(auth: FirebaseAuth, activity: Activity) {
-        // [START send_email_verification]
-        val user = auth.currentUser
-        user?.sendEmailVerification()
-            ?.addOnCompleteListener(activity) { task ->
-                // Email Verification sent
-            }
-        // [END send_email_verification]
-    }
+//private fun sendEmailVerification(auth: FirebaseAuth, activity: Activity) {
+    // [START send_email_verification]
+    //val user = auth.currentUser
+    //user?.sendEmailVerification()
+      //  ?.addOnCompleteListener(activity) { task ->
+            // Email Verification sent
+       // }
+    // [END send_email_verification]
+//}
 //private fun updateUI(user: FirebaseUser?, auth: FirebaseAuth) {
 //}
 
@@ -330,18 +323,18 @@ private fun signIn(
 
 
 //private fun redirectToHome(activity: Activity) {
-  //  val intent = Intent(activity, WelcomeActivity::class.java)
-    //activity.startActivity(intent)
-    //activity.finish() // Facultatif : pour fermer l'activité actuelle
+//  val intent = Intent(activity, WelcomeActivity::class.java)
+//activity.startActivity(intent)
+//activity.finish() // Facultatif : pour fermer l'activité actuelle
 //}
 
 //private fun saveLoginState(context: Context, isLoggedIn: Boolean) {
-  //  val sharedPref =
-    //    context.getSharedPreferences("login_state", android.content.Context.MODE_PRIVATE)
-    //with(sharedPref.edit()) {
-      //  putBoolean("isLoggedIn", isLoggedIn)
-        //apply()
-    //}
+//  val sharedPref =
+//    context.getSharedPreferences("login_state", android.content.Context.MODE_PRIVATE)
+//with(sharedPref.edit()) {
+//  putBoolean("isLoggedIn", isLoggedIn)
+//apply()
+//}
 //}
 
 

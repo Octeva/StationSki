@@ -2,7 +2,9 @@ package fr.isen.gauthier.projectgroup
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
+
 
 class SignUpActivity : EmailPasswordActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -10,6 +12,8 @@ class SignUpActivity : EmailPasswordActivity() {
         setContent {
             ConnexionScreen(AuthenticationType.SIGNIN, auth, this)
         }
+        Log.d("TAG", "signup appelée")
+
     }
 }
 
