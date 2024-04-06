@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -51,6 +52,8 @@ import fr.isen.gauthier.projectgroup.R
 import fr.isen.gauthier.projectgroup.Station.DetailPisteActivity
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import androidx.compose.foundation.layout.Row
+
 
 class PisteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,53 +80,59 @@ fun ListePiste(category: PisteCategory) {
 
     val colors = listOf(Color.Cyan, Color.Gray, Color.Red, Color.Green)
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        itemsIndexed(categories) { index, category ->
-            val categoryColor = colors.getOrNull(index % colors.size) ?: Color.Transparent
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            itemsIndexed(categories) { index, category ->
+                val categoryColor = colors.getOrNull(index % colors.size) ?: Color.Transparent
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .background(color = categoryColor)
-                    .padding(16.dp)
-                    .clickable {
-                        expandedCategoryIndex.value = index
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Column (
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Affiche le nom de la catégorie
-                    Text(
-                        text = category.code,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    // Si l'index de la catégorie est le même que l'index de la catégorie actuellement étendue
+                    // Affiche le nom de la catégorie avec le fond coloré
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .background(color = categoryColor)
+                            .clickable {
+                                expandedCategoryIndex.value = index
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = category.code,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    // Afficher les boutons pour chaque piste de la catégorie
                     if (expandedCategoryIndex.value == index) {
-                        // Afficher les boutons pour chaque piste de la catégorie
-                        category.pistes.forEach { piste ->
+                        val openPistes = category.pistes.filter { it.etat }
+                        val closedPistes = category.pistes.filter { !it.etat }
+                        val sortedPistes = openPistes + closedPistes
+
+                        sortedPistes.forEach { piste ->
                             OutlinedButton(
                                 onClick = {
-                                    // Afficher le Toast lorsque le bouton est cliqué
-                                    //Toast.makeText(context, "Vous voulez aller à ${piste.name}", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(context, DetailPisteActivity::class.java)
-
-                                    //intent.putExtra(DetailActivity., pistes)
                                     intent.putExtra("pisteName", piste.name)
-
                                     context.startActivity(intent)
                                 },
                                 modifier = Modifier
@@ -131,19 +140,23 @@ fun ListePiste(category: PisteCategory) {
                                     .fillMaxWidth()
                                     .wrapContentHeight()
                             ) {
-                                val etatPiste = remember { mutableStateOf("Chargement...") }
-
-                                LaunchedEffect(piste) {
-                                    getPisteEtatInDatabase(piste) { etat ->
-                                        etatPiste.value = etat
-                                    }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = piste.name,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.Black
+                                    )
+                                    Image(
+                                        painterResource(if (piste.etat) R.drawable.aaaa else R.drawable.bbbbb),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .padding(start = 8.dp)
+                                    )
                                 }
-                                Text(
-                                    text = "${piste.name} : ${etatPiste.value}",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.Black
-                                )
                             }
                         }
                     }
@@ -151,6 +164,11 @@ fun ListePiste(category: PisteCategory) {
             }
         }
     }
+
+
+
+
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
@@ -223,6 +241,7 @@ fun ListePiste(category: PisteCategory) {
         }
     }
 }
+
 
 
 suspend fun getDataFromDatabase(): List<PisteCategory> {
