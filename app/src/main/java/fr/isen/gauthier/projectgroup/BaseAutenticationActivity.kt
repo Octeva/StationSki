@@ -65,7 +65,8 @@ open class EmailPasswordActivity : ComponentActivity() {
 
         if (auth.currentUser != null) {
             // L'utilisateur est déjà connecté
-            //redirectToWelcomeActivity(this)
+            val intent = Intent(this, WelcomeActivity::class.java)
+            this.startActivity(intent)
         } else {
             // L'utilisateur n'est pas connecté, démarrer l'écran d'authentification
             val intent = Intent(this, SignUpActivity::class.java)
@@ -79,7 +80,8 @@ open class EmailPasswordActivity : ComponentActivity() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             // Utilisateur déjà connecté, rediriger vers l'écran d'accueil
-            //redirectToWelcomeActivity(this)
+            val intent = Intent(this, WelcomeActivity::class.java)
+            this.startActivity(intent)
         }
     }
 
@@ -87,6 +89,8 @@ open class EmailPasswordActivity : ComponentActivity() {
         super.onStop()
         // Déconnexion de l'utilisateur lors de la fermeture de l'application
         FirebaseAuth.getInstance().signOut()
+        Log.d("TAG", "onstop")
+
     }
     @Composable
     fun ConnexionScreen(
@@ -205,9 +209,9 @@ open class EmailPasswordActivity : ComponentActivity() {
         }
     }
     //private fun redirectToWelcomeActivity(activity: Activity) {
-      //  val intent = Intent(activity, WelcomeActivity::class.java)
-        //activity.startActivity(intent)
-        //activity.finish() // Fermer l'activité actuelle pour revenir à l'écran précédent
+    //  val intent = Intent(activity, WelcomeActivity::class.java)
+    //activity.startActivity(intent)
+    //activity.finish() // Fermer l'activité actuelle pour revenir à l'écran précédent
     //}
 
 
@@ -290,7 +294,8 @@ private fun signIn(
                 // Sign in success, update UI with the signed-in user's information
                 Log.d("TAG", "signInWithEmail:success")
                 Toast.makeText(activity, "Bien connecté!", Toast.LENGTH_SHORT).show()
-               // redirectToWelcomeActivity(activity)
+                val intent = Intent(activity, WelcomeActivity::class.java)
+                activity.startActivity(intent)
                 val user = auth.currentUser
 
             } else {
