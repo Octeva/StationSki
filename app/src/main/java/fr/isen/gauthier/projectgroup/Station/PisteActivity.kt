@@ -225,7 +225,7 @@ fun ListePiste(category: PisteCategory) {
             }
             OutlinedButton(
                 onClick = {
-                    Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
                 },
                 modifier = Modifier.weight(1f)
             ) {

@@ -35,7 +35,9 @@ import com.google.firebase.auth.FirebaseAuth
 import fr.isen.gauthier.projectgroup.MainActivity
 import android.util.Log
 
-
+object UserSingleton {
+    var currentUser: User? = null
+}
 
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +87,7 @@ class WelcomeActivity : ComponentActivity() {
                     OutlinedButton(
                         onClick = {
                             val intent = Intent(context, PisteActivity::class.java)
+                            intent.putExtra("pseudo",pseudo)
                             context.startActivity(intent)
                         },
                         modifier = Modifier.weight(1f)
@@ -97,6 +100,7 @@ class WelcomeActivity : ComponentActivity() {
                     OutlinedButton(
                         onClick = {
                             val intent = Intent(context, RemonteeActivity::class.java)
+                            intent.putExtra("pseudo",pseudo)
                             context.startActivity(intent)
                         },
                         modifier = Modifier.weight(1f)
@@ -130,7 +134,7 @@ class WelcomeActivity : ComponentActivity() {
                     }
                     OutlinedButton(
                         onClick = {
-                            Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
                         },
                         modifier = Modifier.weight(1f)
                     ) {
@@ -145,107 +149,6 @@ class WelcomeActivity : ComponentActivity() {
         }
     }
 }
-
-//@Composable fun BasketView() {
-//    val context = LocalContext.current
-//
-//    Surface(
-//        modifier = Modifier
-//            .fillMaxSize(),
-//    ) {
-//        Column(
-//            modifier = Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Text(
-//                text = " Bienvenue ",
-//                fontFamily = FontFamily.Default,
-//                fontSize = 44.sp,
-//                modifier = Modifier.padding(bottom = 16.dp)
-//            )
-//            Image(
-//                painterResource(R.drawable.plan_des_pistes_alpin_molines_saint_veran_domaine_beauregard),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .padding(bottom = 16.dp)
-//                    .size(350.dp) // Augmentation de la taille de l'image
-//            )
-//        }
-//    }
-//
-//Box(
-//        modifier = Modifier.fillMaxSize(),
-//        contentAlignment = Alignment.BottomCenter
-//    ) {
-//        BottomAppBar(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(56.dp)
-//                .shadow(elevation = 8.dp)
-//                .background(color = colorResource(id = R.color.purple_500))
-//        ) {
-//            OutlinedButton(
-//                onClick = {
-//                    val intent = Intent(context, PisteActivity::class.java)
-//                    context.startActivity(intent)
-//                },
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Image(
-//                    painterResource(R.drawable._200px_alpine_skiing_pictogram_svg),
-//                    contentDescription = null
-//                )
-//            }
-//            OutlinedButton(
-//                onClick = {
-//                    val intent = Intent(context, RemonteeActivity::class.java)
-//                    context.startActivity(intent)
-//                },
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Image(
-//                    painterResource(R.drawable._205016),
-//                    contentDescription = null
-//                )
-//            }
-//            OutlinedButton(
-//                onClick = {
-//                    Toast.makeText(context, "ici", Toast.LENGTH_LONG).show()
-//                },
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Image(
-//                    painterResource(R.drawable.picto_maison_png),
-//                    contentDescription = null
-//                )
-//            }
-//            OutlinedButton(
-//                onClick = {
-//                    Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
-//                },
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Image(
-//                    painterResource(R.drawable._58656_chat_icon_free_clipart_hd),
-//                    contentDescription = null
-//                )
-//            }
-//            OutlinedButton(
-//                onClick = {
-//                    Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
-//                },
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Image(
-//                    painterResource(R.drawable.refresh_icon),
-//                    contentDescription = null
-//                )
-//            }
-//        }
-//    }
-//    DisconnectButton()
-//}
 
 
 @Composable

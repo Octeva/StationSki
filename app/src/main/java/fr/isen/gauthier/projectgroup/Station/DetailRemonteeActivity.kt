@@ -74,13 +74,13 @@ class DetailRemonteeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val remonteeName = intent.getSerializableExtra("remonteeName") as String
         val pseudo = intent.getStringExtra("pseudo") ?: ""
+        Log.d("DetailRemonteeActivity", "pseudo: $pseudo")
 
         lifecycleScope.launch {
             val remontee = getRemonteeByName(remonteeName)
 
             setContent {
 
-                Text(text = "Bienvenue $pseudo !")
                 ScaffoldRemontee(remontee = remontee!!, pseudo = pseudo)
             }
 
@@ -91,7 +91,7 @@ class DetailRemonteeActivity : ComponentActivity() {
 //@OptIn(ExperimentalMaterial3Api::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
+fun ScaffoldRemontee(remontee: Remontee, pseudo: String) {
     var presses by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val etatRemontee = remember { mutableStateOf(remontee?.etat ?: false) }
@@ -118,8 +118,7 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
             TopAppBar(
                 title = {
                     Text(
-                        "Bienvenue $pseudo !",
-                        //remontee.name,
+                        remontee.name,
                         textAlign = TextAlign.Center,
                         fontSize = 40.sp,
                         fontFamily = FontFamily.Serif,
@@ -193,7 +192,7 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
                 }
                 OutlinedButton(
                     onClick = {
-                        Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -224,14 +223,6 @@ fun ScaffoldRemontee(remontee: Remontee,pseudo: String) {
                     etatRemontee = etatRemontee,
                     waitingRemontee = waitingRemontee
                 )
-            } ?: run {
-                // Gérer le cas où remontee est nul, par exemple, afficher un message d'erreur ou retourner à l'activité précédente
-                Toast.makeText(
-                    context,
-                    "Erreur : Les détails de la remontée ne sont pas disponibles.",
-                    Toast.LENGTH_LONG
-                ).show()
-//                finish() // Termine cette activité et retourne à l'activité précédente
             }
 
             // Champ de texte pour ajouter un commentaire
@@ -519,15 +510,6 @@ fun ModifierRemontee(
             }
         }
 
-//        Button(
-//            onClick = {
-//            },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 20.dp, end = 10.dp, start = 10.dp)
-//        ) {
-//            Text(text = "Valider les modifications")
-//        }
     }
 }
 

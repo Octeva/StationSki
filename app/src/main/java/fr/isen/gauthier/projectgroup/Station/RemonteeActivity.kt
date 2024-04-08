@@ -128,8 +128,7 @@ fun ListeRemontee(category: RemonteeCategory) {
                         sortedRemontee.forEach { remontee ->
                             OutlinedButton(
                                 onClick = {
-                                    val intent =
-                                        Intent(context, DetailRemonteeActivity::class.java)
+                                    val intent = Intent(context, DetailRemonteeActivity::class.java)
                                     intent.putExtra("remonteeName", remontee.name)
                                     context.startActivity(intent)
                                 },
@@ -223,7 +222,7 @@ fun ListeRemontee(category: RemonteeCategory) {
             }
             OutlinedButton(
                 onClick = {
-                    Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
                 },
                 modifier = Modifier.weight(1f)
             ) {

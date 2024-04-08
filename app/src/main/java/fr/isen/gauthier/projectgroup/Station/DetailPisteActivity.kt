@@ -3,6 +3,7 @@ package fr.isen.gauthier.projectgroup.Station
 import android.content.Intent
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,17 +18,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -35,9 +46,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +59,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.gauthier.projectgroup.CallDataBase
 import fr.isen.gauthier.projectgroup.Network.Piste
+import fr.isen.gauthier.projectgroup.Network.Remontee
 //import fr.isen.gauthier.projectgroup.Network.SaveDetailPiste
 import fr.isen.gauthier.projectgroup.Network.setPisteAffluence
 import fr.isen.gauthier.projectgroup.Network.setPisteEtat
@@ -66,126 +80,191 @@ class DetailPisteActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val pisteName = intent.getSerializableExtra("pisteName") as String
 
+        val pseudo = intent.getStringExtra("pseudo") ?: ""
+        Log.d("DetailRemonteeActivity", "pseudo: $pseudo")
 
-        lifecycleScope.launch {
-            val piste = getPisteByName(pisteName)
-
+            lifecycleScope.launch {
+                val piste = getPisteByName(pisteName)
             setContent {
 
-                val context = LocalContext.current
-                val etatPiste = remember { mutableStateOf(piste?.etat ?: false) }
-                val affluencePiste = remember { mutableStateOf(piste?.affluence ?: 0) }
-                val meteoPiste = remember { mutableStateOf(piste?.visibility ?: 0) }
+
                 Surface {
+                    ScaffoldPiste(piste = piste!!, pseudo = "$pseudo")
+                }
+            }
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldPiste(piste: Piste, pseudo: String){
+var context = LocalContext.current
+val etatPiste = remember { mutableStateOf(piste?.etat ?: false) }
+val affluencePiste = remember { mutableStateOf(piste?.affluence ?: 0) }
+val meteoPiste = remember { mutableStateOf(piste?.visibility ?: 0) }
+
+    // Définissez une liste mutable pour stocker les commentaires
+    val commentaires = remember { mutableStateListOf<String>() }
+    // Définissez un état pour stocker le commentaire entré par l'utilisateur
+    val commentaireText = remember { mutableStateOf("") }
+
+    // Fonction pour ajouter un commentaire
+    val ajouterCommentaire: () -> Unit = {
+        val commentaire = commentaireText.value.trim()
+        if (commentaire.isNotBlank()) {
+            commentaires.add(commentaire)
+            // Effacer le champ de texte après l'ajout du commentaire
+            commentaireText.value = ""
+        }
+    }
+    Log.d("DetailRemonteeActivity", "Pseudo: $pseudo")
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        piste.name,
+                        textAlign = TextAlign.Center,
+                        fontSize = 40.sp,
+                        fontFamily = FontFamily.Serif,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 16.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
+                    )
+                }
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .shadow(elevation = 8.dp)
+                    .background(color = colorResource(id = R.color.purple_500))
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(context, PisteActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.pictogramme_ski),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(context, RemonteeActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.pictogramme_telecabine),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(context, WelcomeActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.pictogramme_maison),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.pictogramme_conversation),
+                        contentDescription = null
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painterResource(R.drawable.refresh_icon),
+                        contentDescription = null
+                    )
+                }
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()), // Ajoutez un défilement vertical à la colonne
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            //Fonction Pour afficher les details de la piste entrer par les utilisateurs
+            piste?.let { nonNullPiste->
+                // Appel de fonctions avec nonNullRemontee qui est garanti de ne pas être nul
+                DetailPiste(
+                    piste = nonNullPiste,
+                    etatPiste = etatPiste,
+                    affluencePiste = affluencePiste,
+                    meteoPiste = meteoPiste
+                )
+                ModifierPiste(
+                    piste = nonNullPiste,
+                    etatPiste = etatPiste,
+                    affluencePiste = affluencePiste,
+                    meteoPiste = meteoPiste
+                )
+            }
+
+            // Champ de texte pour ajouter un commentaire
+            OutlinedTextField(
+                value = commentaireText.value,
+                onValueChange = { commentaireText.value = it },
+                label = { Text("Ajouter un commentaire") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+
+            // Bouton pour ajouter un commentaire
+            Button(
+                onClick = ajouterCommentaire,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 16.dp, top = 8.dp)
+            ) {
+                Text("Ajouter")
+            }
 
 
-                    Column {
-                        Box(contentAlignment = Alignment.Center) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                piste?.let {
-                                    Text(
-                                        text = it.name,
-                                        fontSize = 40.sp,
-                                        fontFamily = FontFamily.Serif,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(
-                                            top = 16.dp,
-                                            start = 16.dp,
-                                            end = 16.dp,
-                                            bottom = 16.dp
-                                        )
-                                    )
-                                }
-
-                                Text(
-                                    text = "Detail de la piste",
-                                    fontSize = 15.sp,
-                                    fontFamily = FontFamily.Serif,
-                                    fontWeight = FontWeight.Normal,
-                                    fontStyle = FontStyle.Italic,
-                                )
-                            }
-                        }
-
-                        //Fonction Pour afficher les details de la piste entrer par les utilisateurs
-                        DetailPiste(piste = piste!!, etatPiste = etatPiste, affluencePiste = affluencePiste, meteoPiste = meteoPiste)
-                        ModifierPiste(piste = piste, etatPiste = etatPiste, affluencePiste = affluencePiste, meteoPiste = meteoPiste)
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            BottomAppBar(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp)
-                                    .shadow(elevation = 8.dp)
-                                    .background(color = colorResource(id = R.color.purple_500))
-                            ) {
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = Intent(context, PisteActivity::class.java)
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.pictogramme_ski),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = Intent(context, RemonteeActivity::class.java)
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.pictogramme_telecabine),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = Intent(context, WelcomeActivity::class.java)
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.pictogramme_maison),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        Toast.makeText(context, "blabla", Toast.LENGTH_LONG).show()
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.pictogramme_conversation),
-                                        contentDescription = null
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        Toast.makeText(context, "rafraiche", Toast.LENGTH_LONG).show()
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.refresh_icon),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        }
-                    }
+            // Liste des commentaires
+            commentaires.forEach { commentaire ->
+                Card {
+                    Text(
+                        text = commentaire,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        style = TextStyle(fontStyle = FontStyle.Italic)
+                    )
+                    Text(text = "Commentaire de $pseudo")
                 }
             }
 
@@ -195,9 +274,11 @@ class DetailPisteActivity : ComponentActivity() {
 
 @Composable
 fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: MutableState<Int>, meteoPiste: MutableState<Int>) {
-    Column {
-        Card(modifier = Modifier
-            .fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp)
+    ) {
 
 
         Row{
@@ -217,7 +298,6 @@ fun DetailPiste(piste: Piste, etatPiste: MutableState<Boolean>, affluencePiste: 
                     .padding(top = 8.dp)
                     .size(50.dp),
             )
-        }
         }
 
         Row{
